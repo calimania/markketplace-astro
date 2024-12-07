@@ -25,13 +25,13 @@ const { currentPage, totalPages, paginatedPosts } = Astro.props;
 ---
 
 <Layout title={`Posts | ${SITE.title}`}>
-  <Header activeNav="posts" store={store} />
+  <Header activeNav="blog" store={store} />
   <Main pageTitle="Posts" pageDesc="All the articles I've posted.">
     <ul>
       {
         paginatedPosts.map(({ id, data }) => (
           <Card
-            href={`/posts/${id}-${slugifyStr(data.Title)}/`}
+            href={`/blog/${id}-${slugifyStr(data.Title)}/`}
             tags={data.Tags.map((tag: { Label: string }) => tag.Label)}
             frontmatter={{
               author: "x",
@@ -50,8 +50,8 @@ const { currentPage, totalPages, paginatedPosts } = Astro.props;
   <Pagination
     {currentPage}
     {totalPages}
-    prevUrl={`/posts${currentPage - 1 !== 1 ? "/" + (currentPage - 1) : ""}/`}
-    nextUrl={`/posts/${currentPage + 1}/`}
+    prevUrl={`/blog${currentPage - 1 !== 1 ? "/" + (currentPage - 1) : ""}/`}
+    nextUrl={`/blog/${currentPage + 1}/`}
   />
 
   <Footer noMarginTop={totalPages > 1} activeNav="x" />

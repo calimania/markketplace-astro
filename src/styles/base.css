@@ -131,8 +131,36 @@ prose-code: rounded prose-code:bg-skin-card prose-code:bg-opacity-75 prose-code:
     font-weight: var(--shiki-dark-font-weight) !important;
     text-decoration: var(--shiki-dark-text-decoration) !important;
   }
-}
 
+  html[data-theme="dark"] p,
+  html[data-theme="dark"] span {
+    color: white !important;
+    /* background-color: var(--shiki-dark-bg) !important;
+    font-style: var(--shiki-dark-font-style) !important;
+    font-weight: var(--shiki-dark-font-weight) !important;
+    text-decoration: var(--shiki-dark-text-decoration) !important; */
+  }
+
+  h1, h2, h3, h4, strong {
+    color: #0157ad !important;
+  }
+
+  html[data-theme="dark"] h1,
+  html[data-theme="dark"] h3,
+  html[data-theme="dark"] h4,
+  html[data-theme="dark"] strong,
+  html[data-theme="dark"] h2 {
+    color: #fbda0d !important;
+  }
+
+  .brand-yellow {
+    color: #fbda0d !important;
+  }
+
+  .brand-blue {
+    color: #0157ad;
+  }
+}
 @layer components {
   .prose-headings {}
   .display-none {
