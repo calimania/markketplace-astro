@@ -1,250 +1,133 @@
 ---
-import type { CollectionEntry } from "astro:content";
-import Layout from "@layouts/Layout.astro";
-import Main from "@layouts/Main.astro";
-import Header from "@components/Header.astro";
-import Footer from "@components/Footer.astro";
-import { markketplace } from "@config";
-import HeroImage from "@components/HeroImage.astro";
-
-import { marked } from "marked";
-
 import { getCollection } from "astro:content";
-import type Store from "@interfaces/Store";
-import { slugifyStr } from "@utils/slugify";
-import type Product from "@interfaces/Product";
+import { markketplace } from "@config";
+import { ProductSlideshow, ProductForm } from "@scripts/ui.product";
+import Slides from "@components/Slides.astro";
+import Footer from "@components/Footer.astro";
 
-export interface Props {
-  currentPage: number;
-  totalPages: number;
-  stores: CollectionEntry<"stores">[];
-  product?: { data: Product };
+const products = await getCollection("products");
+const { slug } = Astro.params;
+const product = products.find((product) => product.slug === slug);
+
+if (!product) {
+  throw new Error(`Product with slug "${slug}" not found`);
 }
 
-export async function getStaticPaths() {
-  const products = await getCollection("products");
-
-  const productsResult = products.map((product: { data: Product }) => ({
-    params: {
-      slug: `${product.data.slug || slugifyStr(product.data.Name)}`,
-    },
-    props: { product },
-  })) as { params: { slug: string }; props: { product: Product } }[];
-
-  return [...productsResult];
-}
-
-const { product } = Astro.props;
-
-const stores = await getCollection("stores");
-const store = stores.find(
-  (store: { data: Store }) => store.data.slug == markketplace.STORE_SLUG
-);
-
-const htmlDescription = marked.parse(product?.data?.Description || "");
-const prices = product?.data?.PRICES || [];
-
-const selectedImage =
-  product?.data?.Thumbnail ||
-  product?.data?.Slides?.[0] ||
-  product?.data?.SEO?.socialImage ||
-  {};
+const { data } = product;
 ---
 
+<article class="product-page">
+  <header>
+    <h1>{data.Name}</h1>
+    <p>{data.Description}</p>
+  </header>
+
+  <div class="product-details">
+    <div class="product-images">
+      <Slides slides={data.Images} />
+    </div>
+    <div class="product-info">
+      <p><strong>Price:</strong> ${data.Price}</p>
+      <p><strong>SKU:</strong> {data.SKU}</p>
+      <p><strong>Category:</strong> {data.Category}</p>
+      <p><strong>Tags:</strong> {data.Tags.join(", ")}</p>
+    </div>
+  </div>
+
+  <div class="product-slideshow-modal hidden">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <Slides slides={data.Images} />
+    </div>
+  </div>
+
+  <footer>
+    <a href="/products" class="return-link">Return to product list</a>
+  </footer>
+</article>
+
 <script>
-  import { ProductSlideshow, ProductForm } from "../../scripts/ui.product";
-  document.addEventListener("astro:page-load", () => {
-    ProductForm();
-    ProductSlideshow();
+  ProductSlideshow();
+  ProductForm();
+
+  const modal = document.querySelector(".product-slideshow-modal");
+  const closeModal = document.querySelector(".close");
+
+  document.querySelectorAll(".product-images img").forEach((img) => {
+    img.addEventListener("click", () => {
+      modal.classList.remove("hidden");
+    });
+  });
+
+  closeModal.addEventListener("click", () => {
+    modal.classList.add("hidden");
+  });
+
+  window.addEventListener("click", (event) => {
+    if (event.target === modal) {
+      modal.classList.add("hidden");
+    }
   });
 </script>
 
-<Layout
-  title={`${product?.data?.Name} | ${store?.data?.title}`}
-  meta={{
-    title: product?.data?.SEO?.metaTitle,
-    image: product?.data?.Thumbnail?.url,
-    description: product?.data?.SEO?.metaDescription,
-  }}
->
-  <Header store={store} />
-  <Main
-    pageTitle={product?.data?.Name as string}
-    pageDesc={product?.data?.SEO?.metaDescription || "Product Details"}
-  />
+<style>
+  .product-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+  }
 
-  <main class="lg:px-8 product-page px-4 py-12 sm:px-6">
-    <div class="mx-auto max-w-3xl">
-      <div class="lg:grid lg:grid-cols-2 lg:gap-x-8 lg:items-start">
-        <div
-          class="aspect-w-3 aspect-h-4 max-sm max-w-2xl overflow-hidden rounded-l"
-        >
-          <HeroImage
-            title={product?.data?.Name as string}
-            image={selectedImage}
-          />
-        </div>
-        <div class="flex flex-col">
-          {
-            product?.data?.Slides?.length > 0 && (
-              <div class="mt-8">
-                <div class="grid grid-cols-3 gap-2">
-                  {product?.data?.Slides?.map((slide: any) => (
-                    <div class="product-slide aspect-w-3 aspect-h-4 overflow-hidden rounded-lg">
-                      <img
-                        src={slide?.formats?.thumbnail?.url}
-                        alt={slide.alternativeText || ""}
-                        data-astro-image={JSON.stringify(slide?.formats?.small)}
-                        class="h-full w-full cursor-pointer object-cover object-center transition-opacity hover:opacity-75"
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )
-          }
-        </div>
-        <div class="lg:mt-0 mt-10 px-4 sm:mt-16 sm:px-0">
-          <h1
-            class="text-3xl font-extrabold tracking-tight text-gray-900 dark:text-white"
-          >
-            {product?.data?.Name}
-          </h1>
+  .product-details {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+  }
 
-          {/* Product description */}
-          <div class="mt-6">
-            <div
-              class="prose space-y-6 text-base text-gray-700 dark:prose-invert dark:text-gray-300"
-              set:html={htmlDescription}
-            />
-          </div>
+  .product-images {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
 
-          {/* Price selector */}
-          <div class="product-form-container mt-8">
-            <form
-              data-product-price={product?.data.id}
-              data-product-json={JSON.stringify(product?.data)}
-            >
-              <div class="flex items-center justify-between">
-                <h2 class="text-2xl font-medium text-gray-900 dark:text-white">
-                  Available Options
-                </h2>
-                <span class="text-sm text-gray-500">
-                  Select your preferred option
-                </span>
-              </div>
-              <div class="m-4">
-                <label for="price"><strong>Price Options</strong></label>
-                <select
-                  id="price"
-                  name="price"
-                  data-input="product.prices"
-                  class="block w-full rounded-md border-2 border-solid border-gray-300 py-2 pl-3 pr-10 text-base focus:border-accent-500 focus:outline-none focus:ring-accent-500 dark:border-gray-600 dark:bg-gray-700"
-                >
-                  <option value=""></option>
-                  {
-                    prices.map((price: any) => (
-                      <option
-                        value={price.STRIPE_ID}
-                        data-price-data={JSON.stringify(price)}
-                      >
-                        {price.Name.replace(/_/gi, " ")} - ${price.Price}{" "}
-                        {price.Currency}
-                      </option>
-                    ))
-                  }
-                </select>
-                <p class="">
-                  <em data-output="product.price.description"></em>
-                </p>
-              </div>
-              <div class="m-4">
-                <label for="quantity"><strong>Quantity</strong></label>
-                <input
-                  type="number"
-                  id="quantity"
-                  value="1"
-                  data-input="quantity"
-                  class="w-full rounded-md border-2 border-solid border-gray-300 py-2 pl-3 pr-10 text-base focus:border-accent-500 focus:outline-none focus:ring-accent-500 dark:border-gray-600 dark:bg-gray-700"
-                  style={{
-                    // border: "1px solid #6b7280",
-                  }}
-                />
-              </div>
-              <div class="m-4">
-                <p>For tips, or custom price products, enter the number here</p>
-                <label for="custom-price"><strong>Custom Price</strong></label>
-                <input
-                  data-input="custom-price"
-                  type="number"
-                  placeholder="0"
-                  name="custom-price"
-                  id="custom-price"
-                  class="w-full rounded-md border-2 border-solid border-gray-300 py-2 pl-3 pr-10 text-base focus:border-accent-500 focus:outline-none focus:ring-accent-500 dark:border-gray-600 dark:bg-gray-700"
-                  style={{
-                    // border: "1px solid #6b7280",
-                  }}
-                />
-              </div>
-              <div class="m-4">
-                <label for="total"><strong>Total</strong></label>
-                <p class="text-4xl">$<span data-output="total">0</span></p>
-              </div>
-              <div class="m-4">
-                <button
-                  disabled
-                  data-action-button="submit"
-                  type="submit"
-                  class="flex w-full items-center justify-center rounded-md border border-transparent bg-sky-500 px-8 py-3 text-base font-medium text-white hover:bg-accent-700 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  Continue to Payment
-                </button>
-                <ol class="mt-4 max-w-xl text-sm text-gray-500">
-                  <li class="mb-2">
-                    We use Stripe to collect payments, and send payouts to the
-                    artists
-                  </li>
-                  <li class="mb-2">
-                    You'll be redirected to a Stripe page to continue, and we'll
-                    notify the artists after a succesful transaction
-                  </li>
-                  <li class="mb-2">
-                    Currently we don't support a shopping cart, you can get one
-                    or multiple units of the same
-                    <em>Price</em> per transaction
-                  </li>
-                  <li class="mb-2">
-                    We notify the artist after a succesful transaction and
-                    forward your shipping details and email to them
-                  </li>
-                  <li class="mb-2">
-                    The artists will reach out with tracking details, or follow
-                    up steps to complete the transaction
-                  </li>
-                </ol>
-              </div>
-            </form>
-          </div>
-          {/* Product metadata */}
-          <!-- <div class="mt-8 border-t border-gray-200 pt-8 dark:border-gray-700">
-          <div class="prose dark:prose-invert">
-            <h3 class="text-sm font-medium text-gray-900 dark:text-white">
-              Tags
-            </h3>
-            <div class="mt-4 space-y-6">
-              {
-                product?.data?.Tag?.map((tag: any) => (
-                  <span class="text-accent-800 dark:bg-accent-800 mr-2 inline-flex items-center rounded-full bg-accent-100 px-3 py-0.5 text-sm font-medium dark:text-accent-100">
-                    {tag.Label}
-                  </span>
-                ))
-              }
-            </div>
-          </div>
-        </div> -->
-        </div>
-      </div>
-    </div>
-  </main>
-  <Footer />
-</Layout>
+  .product-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .product-slideshow-modal {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+  }
+
+  .modal-content {
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    position: relative;
+  }
+
+  .close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 2rem;
+    cursor: pointer;
+  }
+
+  .return-link {
+    margin-top: 2rem;
+    text-decoration: underline;
+    color: var(--color-accent);
+  }
+</style>
