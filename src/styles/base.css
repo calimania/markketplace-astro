@@ -239,3 +239,63 @@ html[data-theme="dark"] a {
 .product-page .product-slide {
   max-height: 180px;
 }
+
+.product-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+}
+
+.product-details {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+.product-images {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.product-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.product-slideshow-modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 0.5rem;
+  position: relative;
+}
+
+.close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  font-size: 2rem;
+  cursor: pointer;
+}
+
+.return-link {
+  margin-top: 2rem;
+  text-decoration: underline;
+  color: var(--color-accent);
+}
