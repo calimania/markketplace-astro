@@ -1,0 +1,120 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getRecordById, getRecordBySlug } from "../../lib/strapi";
+
+const event = {
+  id: 6,
+  Name: "Brooklyn Tech Expo, Feb 2025",
+  startDate: "2025-02-11T16:00:00.000Z",
+  endDate: "2025-02-11T21:00:00.000Z",
+  Description: "Brooklyn Tech Expo TECH4LIFE Edition on February 11, 2025",
+  slug: "brooklyn-tech-expo-2025",
+};
+
+// Example RSVP data - in real app this would come from your API
+const rsvp = {
+  name: "John Smith",
+  email: "j***h@example.com",
+};
+
+const formatDate = (date: string) => {
+  return new Date(date).toLocaleDateString("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+};
+
+const formatTime = (date: string) => {
+  return new Date(date).toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+  });
+};
+---
+
+<Layout title="RSVP Confirmation - Markkët">
+  <script define:vars={{ getRecordById, getRecordBySlug }}>
+    /** reads the ?slug&rsvp_uid from the URL to fetch records from the API */
+    const params = new URLSearchParams(window.location.search);
+
+    async function load({ request }) {
+      console.log("Confirmation page loading");
+      const { slug, rsvp_uid } = request.query;
+      const event = await getRecordBySlug("events", slug);
+      const rsvp = await getRecordById("rsvps", rsvp_uid);
+      return { event, rsvp };
+    }
+
+    document.addEventListener("astro:page-load", () => {
+      const slug = params.get("slug");
+
+      console.log({ a: "x", slug });
+      const rsvp_uid = params.get("rsvp_uid");
+      console.log({ slug, rsvp_uid });
+
+      load({
+        request: { query: { slug, rsvp_uid } },
+      });
+    });
+  </script>
+  <div class="confirmation-container mx-auto max-w-[600px] bg-white font-sans">
+    <header
+      class="company-name confirmation-header bg-brand-blue p-6 text-center"
+    >
+      <h1 class="text-brand-yellow m-0 text-3xl font-bold tracking-wide">
+        Markkët
+      </h1>
+    </header>
+
+    <div class="yellow-divider bg-brand-yellow h-1"></div>
+
+    <main class="confirmation-content p-8 leading-relaxed text-gray-800">
+      <div class="mb-8">
+        <h2 class="mb-4 text-2xl font-bold">RSVP Confirmed! 🎉</h2>
+        <!-- <p class="mb-2">
+          Dear <span class="text-brand-magenta font-semibold">
+            {rsvp.name}
+          </span>,
+        </p> -->
+        <p class="mb-4">
+          Thank you for confirming your attendance to our upcoming event. We're
+          excited to have you join us!
+        </p>
+      </div>
+
+      <div class="mb-8 rounded-lg bg-gray-50 p-6">
+        <h3 class="mb-4 text-xl font-semibold">Event Details</h3>
+        <div class="space-y-3">
+          <p><span class="font-semibold">Event:</span> {event.Name}</p>
+          <p>
+            <span class="font-semibold">Date:</span>
+            {formatDate(event.startDate)}
+          </p>
+          <p>
+            <span class="font-semibold">Time:</span>
+            {formatTime(event.startDate)} - {formatTime(event.endDate)}
+          </p>
+          <!-- <p><span class="font-semibold">Your Email:</span> ''</p> -->
+        </div>
+      </div>
+
+      <div class="mb-8 text-sm text-gray-600">
+        <p class="mb-2">
+          If you need to make any changes to your RSVP, please don't hesitate to
+          contact us.
+        </p>
+      </div>
+    </main>
+
+    <footer
+      class="confirmation-footer border-t border-gray-200 p-6 text-center"
+    >
+      <p class="text-sm text-gray-600">
+        Powered by
+        <a href="/about" class="text-brand-blue hover:underline">Markkët</a>
+      </p>
+    </footer>
+  </div>
+</Layout>
