@@ -21,10 +21,24 @@ import { slugifyStr } from "@utils/slugify";
 import { markketplace } from "@config";
 
 const stores = await getCollection("stores");
-const events = await getCollection("events");
-const store = stores.find(
-  (store: Store) => store.data.slug === markketplace.STORE_SLUG
-);
+let events = await getCollection("events");
+
+const today = new Date();
+
+events = events
+  .filter(event => new Date(event.data.startDate) > today)
+  .sort((a, b) => {
+    return (
+      new Date(a.data.startDate).getTime() -
+      new Date(b.data.startDate).getTime()
+    );
+  });
+
+// @TODO: separate future and past events
+
+const store: { data: Store } = stores.find(
+  (store: any) => store.data?.slug === markketplace?.STORE_SLUG
+) as any;
 
 const pages = await getCollection("pages");
 
@@ -48,7 +62,7 @@ const { currentPage, totalPages } = Astro.props;
     description,
   }}
 >
-  <Header activeNav="events" store={store} />
+  <Header store={store as any as { data: Store }} />
   <main id="main-content">
     <section id="about" class="mb-10 max-w-3xl prose-img:border-0">
       {
@@ -77,16 +91,9 @@ const { currentPage, totalPages } = Astro.props;
             frontmatter={{
               author: "x",
               title: data.Name || data.SEO?.metaTitle || "---",
-              pubDatetime: new Date(data.createdAt),
-              modDatetime: new Date(data.updatedAt),
+              pubDatetime: new Date(data.startDate),
+              modDatetime: new Date(data.startDate),
               description: data.SEO?.metaDescription || data.Description || "",
-              SEO: {
-                ...data.SEO,
-                metaTitle: data.SEO?.metaTitle || data.Name || "Store",
-                socialImage: {
-                  url: data.SEO?.socialImage?.url || data.Thumbnail?.url,
-                },
-              },
             }}
           />
         ))
