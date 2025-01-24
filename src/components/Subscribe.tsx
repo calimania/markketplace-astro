@@ -1,5 +1,7 @@
 // src/components/Subscribe.tsx
 import { markketplace } from "@config";
+import SubscriptionModal from "./SubscriptionModal";
+import { useState } from "react";
 
 interface Props {
   storeId: string;
@@ -7,8 +9,29 @@ interface Props {
 }
 
 export default function Subscribe({ storeId, storeName }: Props) {
+  const [openModal, setOpenModal] = useState(false)
+  const [openErrorModal, setOpenErrorModal] = useState(false)
   return (
     <div className="">
+    {/* <!-- Modal --> */}
+      {openModal &&
+        <div className="modal-overlay fixed inset-0 bg-opacity-70 flex justify-center items-center z-50">
+          <SubscriptionModal onClose={() => {setOpenModal(false)}} />
+        </div>
+      }
+       {openErrorModal && (
+          <div className="modal-overlay fixed inset-0 bg-opacity-70 flex justify-center items-center z-50">
+            <SubscriptionModal
+              error={true}
+              title="Error"
+              message1="Something went wrong."
+              message2="Please try again later or contact support if the issue persists."
+              buttonText="Close"
+              onClose={() => {setOpenErrorModal(false)}} 
+            />
+          </div>
+        )}
+
       <form
         onSubmit={async (e) => {
           e.preventDefault();
@@ -29,9 +52,11 @@ export default function Subscribe({ storeId, storeName }: Props) {
 
             if (!response.ok) throw new Error();
             form.reset();
-            alert('Thanks for subscribing!');
+            opasdsaen();
+            // setOpenModal(true);
           } catch (error) {
-            alert('Something went wrong. Please try again.');
+            console.log(error)
+            setOpenErrorModal(true)
           }
         }}
       >
