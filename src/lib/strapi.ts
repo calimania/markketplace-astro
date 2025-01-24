@@ -30,6 +30,39 @@ export const createRecord = async <T>(endpoint: string, data: T) => {
 };
 
 /**
+ * The following GETs a record by ID from the Strapi API
+ * @param endpoint - The endpoint to fetch from
+ * @param id - The ID of the record to fetch
+ * @returns The record fetched
+ */
+export const getRecordById = async (endpoint: string, id: string) => {
+  try {
+    const response = await fetch(`${markketplace.STRAPI_URL}/api/${endpoint}/${id}`);
+    return response.json();
+  }
+  catch (error) {
+    console.error('Record fetch failed:', error);
+    return false;
+  }
+};
+
+/**
+ * The following GETs a record by slug from the Strapi API
+ * @param endpoint
+ * @param slug
+ * @returns
+ */
+export const getRecordBySlug = async (endpoint: string, slug: string) => {
+  try {
+    const response = await fetch(`${markketplace.STRAPI_URL}/api/${endpoint}?filters[slug]=${slug}`);
+    return response.json();
+  } catch (error) {
+    console.error('Record fetch failed:', error);
+    return false;
+  }
+};
+
+/**
  * Fetches data from the Strapi API
  * @param endpoint - The endpoint to fetch from
  * @param query - The query parameters to add to the url

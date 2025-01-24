@@ -136,7 +136,15 @@ const selectedImage =
           </button>
         )
       }
-      <RSVPModal client:load eventId={event?.id as string} onClose={() => {}} />
+      {
+        !event?.data?.SEO?.metaUrl && (
+          <RSVPModal
+            client:load
+            eventId={event?.id as string}
+            onClose={() => {}}
+          />
+        )
+      }
     </div>
   </main>
   <Footer />
