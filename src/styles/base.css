@@ -184,6 +184,7 @@ button.brand-yellow:hover {
     @apply outline-2 outline-offset-1 outline-skin-fill focus-visible:no-underline focus-visible:outline-dashed;
   }
 }
+
 .content-page {
   max-width: 1024px;
   margin-left: auto;
@@ -203,6 +204,7 @@ ul.blog-list li {
 ul.blog-list li .aspect-video {
   aspect-ratio: 16/6;
 }
+
 .content-page h1, h2, h3, h4 {
   margin-top: 1em;
 }
@@ -218,33 +220,66 @@ ul.blog-list li .aspect-video {
   line-height: 2.2em;
 }
 
-
-html[data-theme="light"] h3,
-html[data-theme="light"] h1 {
-  color: #000;
-  font-weight: bold;
-  margin-bottom: 1.8em;
-  font-size: 1.3em;
-}
-
-html[data-theme="light"] h4,
-html[data-theme="light"] strong,
-html[data-theme="light"] h2 {
-  color: #ff00cf !important;
-  font-weight: bold;
-  margin-bottom: 1.8em;
-  font-size: 1.3em;
-}
-
-html[data-theme="dark"] h3,
-html[data-theme="dark"] h1,
-html[data-theme="dark"] h4,
-html[data-theme="dark"] strong,
-html[data-theme="dark"] h2 {
+html[data-theme="dark"] h1 {
   color: #fbda0d !important;
   font-weight: bold;
   margin-bottom: 1.8em;
-  font-size: 1.1em;
+  font-size: 2em;
+}
+html[data-theme="dark"] h2 {
+  color: #fbda0d;
+  font-weight: bold;
+  margin-bottom: 1.8em;
+  font-size: 1.5em;
+}
+html[data-theme="dark"] h3 {
+  color: #fbda0d;
+  font-weight: bold;
+  margin-bottom: 1em;
+  font-size: 1.17em;
+}
+html[data-theme="dark"] h4 {
+  color: #ff00cf;
+  font-weight: bold;
+  margin-bottom: 1.8em;
+  font-size: 1em;
+}
+html[data-theme="dark"] strong {
+  color: #fbda0d;
+  font-weight: bold;
+  margin-bottom: 1.8em;
+  font-size: 1em;
+}
+
+html[data-theme="light"] h1 {
+  color: #00A6FB;
+  font-weight: bold;
+  margin-bottom: 1.8em;
+  font-size: 2em;
+}
+html[data-theme="light"] h2 {
+  color: #ff00cf;
+  font-weight: bold;
+  margin-bottom: 1.8em;
+  font-size: 1.5em;
+}
+html[data-theme="light"] h3 {
+  color: #ff00cf;
+  font-weight: bold;
+  margin-bottom: 1em;
+  font-size: 1.17em;
+}
+html[data-theme="light"] h4 {
+  color: #000;
+  font-weight: bold;
+  margin-bottom: 1.8em;
+  font-size: 1em;
+}
+html[data-theme="light"] strong {
+  color: #00A6FB;
+  font-weight: bold;
+  margin-bottom: 1.8em;
+  font-size: 1em;
 }
 
 html[data-theme="dark"] a {

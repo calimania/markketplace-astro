@@ -23,7 +23,7 @@ export default function Card({ href, frontmatter, tags, image, secHeading = true
 
   return (
     <li className="mb-8 w-full md:w-1/2 lg:w-1/3 px-4">
-      <article className="bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300">
+      <article className="bg-gradient-to-br from-white to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300">
         <a href={href} className="block group">
           {image?.url && (
             <div className="relative aspect-video overflow-hidden">
@@ -40,9 +40,9 @@ export default function Card({ href, frontmatter, tags, image, secHeading = true
           )}
           <div className="p-6">
             {secHeading ? (
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-accent-500 transition-colors">
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-accent-500 transition-colors">
                 {title}
-              </h1>
+              </h3>
             ) : (
               <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-accent-500 transition-colors">
                 {title}

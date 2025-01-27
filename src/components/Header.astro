@@ -115,11 +115,8 @@ const { activeNav, store, products } = Astro.props;
       </nav>
     </div>
   </div>
-  <div
-    id="side-panel"
-    class="fixed left-0 top-0 z-[1000] flex h-full w-[300px] -translate-x-full transform bg-gray-800 text-white shadow-lg transition-transform duration-300 ease-in-out"
-  >
-    <div class="flex h-full flex-col p-5">
+  <div id="side-panel" class="fixed top-0 left-0 h-full w-[300px] dark:bg-skin-fill bg-gray-200 opacity-90 text-white shadow-lg transform -translate-x-full transition-transform duration-300 ease-in-out z-[1000] flex">
+    <div class="p-5 flex flex-col h-full">
       <button
         id="close-panel-btn"
         class="absolute right-2.5 top-3.5 cursor-pointer border-none bg-none text-2xl text-white"
@@ -129,39 +126,19 @@ const { activeNav, store, products } = Astro.props;
       >
         <IconX color="#ff00cf" size={42} />
       </button>
-      <strong>Menu</strong>
-      <ul class="mt-5 list-none space-y-4 p-0">
+      <h1>Menu</h1>
+      <ul class="list-none p-0 mt-5 space-y-4">
         <li>
-          <a
-            href="/blog/"
-            class="text-lg text-white transition-colors duration-300 hover:text-sky-400"
-          >
-            Blog
-          </a>
+          <a href="/blog/" class="text-[#ff00cf] text-lg transition-colors duration-300 hover:text-sky-400">Blog</a>
         </li>
         <li>
-          <a
-            href="/products/"
-            class="text-lg text-white transition-colors duration-300 hover:text-sky-400"
-          >
-            Products
-          </a>
+          <a href="/products/" class="text-[#ff00cf] text-lg transition-colors duration-300 hover:text-sky-400">Products</a>
         </li>
         <li>
-          <a
-            href="/tags/"
-            class="text-lg text-white transition-colors duration-300 hover:text-sky-400"
-          >
-            Tags
-          </a>
+          <a href="/tags/" class="text-[#ff00cf] text-lg transition-colors duration-300 hover:text-sky-400">Tags</a>
         </li>
         <li>
-          <a
-            href="/about/"
-            class="text-lg text-white transition-colors duration-300 hover:text-sky-400"
-          >
-            About
-          </a>
+          <a href="/about/" class="text-[#ff00cf] text-lg transition-colors duration-300 hover:text-sky-400">About</a>
         </li>
       </ul>
     </div>

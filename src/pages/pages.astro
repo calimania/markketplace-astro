@@ -17,11 +17,7 @@ const store = stores.find(
 
 let pages = await getCollection("pages");
 pages = pages
-  .sort(
-    (a, b) =>
-      new Date(b.data.createdAt).getTime() -
-      new Date(a.data.createdAt).getTime()
-  )
+  .sort((a, b) => b.data.Title.localeCompare(a.data.Title))
   .filter(
     page =>
       page.data.Active && !["about", "home", "receipt"].includes(page.data.slug)

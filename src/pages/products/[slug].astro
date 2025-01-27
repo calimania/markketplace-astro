@@ -6,6 +6,7 @@ import Header from "@components/Header.astro";
 import Footer from "@components/Footer.astro";
 import { markketplace } from "@config";
 import HeroImage from "@components/HeroImage.astro";
+import CheckoutModal from "@pages/checkout/CheckoutModal"
 
 import { marked } from "marked";
 
@@ -74,10 +75,10 @@ const selectedImage =
     pageDesc={product?.data?.SEO?.metaDescription || "Product Details"}
   />
 
-  <main class="lg:px-8 product-page px-4 py-12 sm:px-6">
-    <div class="mx-auto w-full px-6">
-      <div class="lg:grid lg:grid-cols-2 lg:gap-x-8 lg:items-start mb-10">
-        <div class="flex flex-row lg:flex-col">
+  <main class="lg:px-8 product-page px-2 py-12 sm:px-6">
+    <div class="mx-auto w-full px-3 md:px-6">
+      <div class="grid lg:gap-x-8 lg:items-start">
+        <div class="flex">
           <div
             class="aspect-w-3 aspect-h-4 overflow-hidden rounded-l pr-3"
           >
@@ -124,8 +125,11 @@ const selectedImage =
             />
           </div>
 
+          <div class="flex mt-6 justify-center">
+            <CheckoutModal  client:load prices={prices} product={product} />
+          </div>
           {/* Price selector */}
-          <!-- <div class="product-form-container mt-8 flex lg:hidden">
+          <!-- <div class="product-form-container mt-8">
             <form
               data-product-price={product?.data.id}
               data-product-json={JSON.stringify(product?.data)}
