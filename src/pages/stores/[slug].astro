@@ -12,6 +12,7 @@ import LinkButton from "@components/LinkButton.astro";
 import { getCollection } from "astro:content";
 import type Store from "@interfaces/Store";
 import { slugifyStr } from "@utils/slugify";
+import { marked } from "marked";
 
 export interface Props {
   currentPage: number;
@@ -55,24 +56,23 @@ const store: { data: Store } = stores.find(
   <Header activeNav="pages" store={store} />
   <Main pageTitle={store?.data?.title} pageDesc={`Store `}>
     <main id="main-content">
-      <section id="about" class="mb-10 prose-img:border-0 flex flex-col lg:flex-row">
-          <div class="lg:w-1/2 w-full">
-            {
-              store?.data?.SEO?.socialImage && (
-                <HeroImage
-                  image={store?.data?.SEO?.socialImage?.formats?.medium}
-                  title={store?.data?.title}
-                />
-              )
-            }
-          </div>
-          <section class="mt-4 lg:mt-0 lg:w-1/2 w-full">
-            {
-              store?.data.Description?.split("\n").map(desc => (
-                <p class="mb-5">{desc}</p>
-              ))
-            }
-          </section>
+      <section
+        id="about"
+        class="mb-10 flex flex-col prose-img:border-0 lg:flex-row"
+      >
+        <div class="w-full lg:w-1/2">
+          {
+            store?.data?.SEO?.socialImage && (
+              <HeroImage
+                image={store?.data?.SEO?.socialImage?.formats?.medium}
+                title={store?.data?.title}
+              />
+            )
+          }
+        </div>
+        <section class="mt-4 w-full lg:mt-0 lg:w-1/2">
+          <div set:html={marked.parse(store?.data?.Description)} />
+        </section>
       </section>
       <Hr />
       <h2 class="brand-yellow mt-2 text-2xl tracking-wider sm:text-3xl">
@@ -97,7 +97,7 @@ const store: { data: Store } = stores.find(
       </div>
       <!-- <Hr /> -->
       <!-- {store.slides} -->
-  </main>
+    </main>
 
     <!-- <Pagination
       {currentPage}
