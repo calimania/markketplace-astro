@@ -15,6 +15,8 @@ import { slugifyStr } from "@utils/slugify";
 import Hr from "@components/Hr.astro";
 import type { Price } from "scripts/ui.product";
 
+import ProductPage from "@components/pages.product.astro";
+
 export interface Props {
   currentPage: number;
   totalPages: number;
@@ -29,7 +31,7 @@ export async function getStaticPaths() {
     params: {
       slug: `${product.data.slug || slugifyStr(product.data.Name)}`,
     },
-    props: { product },
+    props: { product: product?.data },
   }));
 
   return [...productsResult];
@@ -37,13 +39,21 @@ export async function getStaticPaths() {
 
 const { product } = Astro.props;
 
-const stores = await getCollection("stores");
-const store = stores.find(store => store.data.slug == markketplace.STORE_SLUG);
+const store = (await getCollection("stores"))?.[0]?.data;
 
 const htmlDescription = marked.parse(product?.data?.Description || "");
 const prices = product?.data?.PRICES || [];
 const selectedImage =
   product?.data?.Thumbnail || product?.data?.SEO?.socialImage || {};
+
+const meta = {
+  title: product?.SEO?.metaTitle || `${store?.title} Product`,
+  image: product?.SEO?.socialImage?.url,
+  description: product?.SEO?.metaDescription,
+  url: product?.SEO?.metaUrl || "/products",
+  pubDatetime: product?.updatedAt,
+  modDatetime: product?.createdAt,
+};
 ---
 
 <script>
@@ -53,29 +63,13 @@ const selectedImage =
   });
 </script>
 
-<Layout
-  title={`${product?.data?.Name} | ${store?.data?.title}`}
-  meta={{
-    title: product?.data?.SEO?.metaTitle,
-    image: product?.data?.Thumbnail?.url,
-    description: product?.data?.SEO?.metaDescription,
-  }}
->
-  <Header store={store} />
-  <Main
-    pageTitle={product?.data?.Name as string}
-    pageDesc={product?.data?.SEO?.metaDescription || "Product Details"}
-  />
+<Layout meta={meta}>
+  <ProductPage product={product} store={store} />
+
   <main class="product-page px-4 py-12 sm:px-6 lg:px-8">
     <div class="mx-auto w-full px-6">
       <div class="mb-10 lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-8">
         <div class="flex flex-col">
-          <div class="aspect-w-3 aspect-h-4 overflow-hidden rounded-l pr-3">
-            <HeroImage
-              title={product?.data?.Name as string}
-              image={selectedImage}
-            />
-          </div>
           <div class="mt-10 flex w-full flex-col justify-end">
             {
               product?.data?.Slides?.length > 0 && (
@@ -102,31 +96,9 @@ const selectedImage =
             }
           </div>
         </div>
-        <div class="mt-10 px-4 sm:mt-16 sm:px-0 lg:mt-0">
-          <h1
-            class="text-3xl font-extrabold tracking-tight text-gray-900 dark:text-white"
-          >
-            {product?.data?.Name}
-          </h1>
-
-          {/* Product description */}
-          <div class="mt-6">
-            <div
-              class="space-y-6 text-base text-gray-700 dark:prose-invert dark:text-gray-300"
-              set:html={htmlDescription}
-            />
-          </div>
-        </div>
       </div>
       <Hr />
-      <div class="mt-6 flex justify-center">
-        <CheckoutModal
-          client:load
-          prices={prices as Price[]}
-          product={product}
-          store={store as CollectionEntry<"stores">}
-        />
-      </div>
+
       <div class="m-4">
         <ol class="mt-4 text-sm text-gray-500">
           <li class="mb-2">
