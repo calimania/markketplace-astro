@@ -1,5 +1,6 @@
 ---
 import LinkButton from "./LinkButton.astro";
+import { IconArrowElbowLeft, IconArrowBounce } from "@tabler/icons-react";
 
 export interface Props {
   currentPage: number;
@@ -18,41 +19,31 @@ const isNextDisabled = next === "disabled";
 
 {
   totalPages > 1 && (
-    <nav class="pagination-wrapper" aria-label="Pagination">
+    <nav class="pagination-wrapper text-center" aria-label="Pagination">
       <LinkButton
         disabled={isPrevDisabled}
         href={prevUrl}
-        className={`mr-4 select-none ${prev}`}
+        className={`group mr-4 transform bg-gray-900 px-12 py-4 text-xs font-light tracking-widest text-white uppercase transition-all duration-300 select-none ${prev} ${!isPrevDisabled && "hover:-translate-y-1 hover:bg-gray-800"}`}
         ariaLabel="Previous"
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class:list={[{ "disabled-svg": isPrevDisabled }]}
-        >
-          <path d="M12.707 17.293 8.414 13H18v-2H8.414l4.293-4.293-1.414-1.414L4.586 12l6.707 6.707z" />
-        </svg>
-        Prev
+        <IconArrowElbowLeft size={18} className="display-inline " />
       </LinkButton>
-      {currentPage} / {totalPages}
+      <span class="mx-8">
+        [ {currentPage} / {totalPages} ]
+      </span>
       <LinkButton
         disabled={isNextDisabled}
         href={nextUrl}
-        className={`ml-4 select-none ${next}`}
+        className={`group mr-4 transform bg-gray-900 px-12 py-4 text-xs font-light tracking-widest text-white uppercase transition-all duration-300 select-none ${next} ${!isNextDisabled && "hover:-translate-y-1 hover:bg-gray-800"}`}
         ariaLabel="Next"
       >
-        Next
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class:list={[{ "disabled-svg": isNextDisabled }]}
-        >
-          <path d="m11.293 17.293 1.414 1.414L19.414 12l-6.707-6.707-1.414 1.414L15.586 11H6v2h9.586z" />
-        </svg>
+        <IconArrowBounce size={18} className="display-inline " />
       </LinkButton>
     </nav>
   )
 }
 
-<style>
+<!-- <style>
   .pagination-wrapper {
     @apply mb-8 mt-auto flex justify-center;
   }
@@ -62,4 +53,4 @@ const isNextDisabled = next === "disabled";
   .disabled-svg {
     @apply group-hover:!fill-skin-base;
   }
-</style>
+</style> -->

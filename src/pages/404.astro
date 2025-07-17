@@ -1,49 +1,104 @@
 ---
 import Layout from "@layouts/Layout.astro";
-import Header from "@components/Header.astro";
 import Footer from "@components/Footer.astro";
-import LinkButton from "@components/LinkButton.astro";
 import { markketplace } from "@config";
-import type Store from "@interfaces/Store";
 import { getCollection } from "astro:content";
 
-const stores = await getCollection("stores");
-const store = stores.find(
-  (store: { data: any }) => markketplace?.STORE_SLUG == store?.data?.slug
-) as any as { data: Store };
-const title = `404 Not Found | ${store?.data?.title}`;
+const stores = await getCollection("store");
+const store = stores?.[0]?.data;
+
+const meta = {
+  title: `404 - not found | ${store?.title}`,
+  description: "default 404 error page",
+};
+
+const image = store?.Cover?.url || store?.Logo?.url;
 ---
 
-<Layout title={title}>
-  <Header store={store} />
-  <main id="main-content">
-    <div class="not-found-wrapper">
-      <h1 aria-label="404 Not Found">404</h1>
-      <span aria-hidden="true">¯\_(ツ)_/¯</span>
-      <p>Page Not Found</p>
-      <LinkButton
-        href="/"
-        className="my-6 text-lg underline decoration-dashed underline-offset-8"
-      >
-        Go back home
-      </LinkButton>
+<Layout meta={meta}>
+  <section
+    class="relative min-h-screen max-w-[100%] overflow-hidden bg-linear-to-br from-gray-50 via-white to-gray-100"
+  >
+    <div
+      class={`absolute inset-0  bg-cover bg-center opacity-7`}
+      style={{
+        backgroundImage: `url("${store?.Cover?.url || markketplace.defaults?.hero}")`,
+      }}
+    >
     </div>
-  </main>
 
+    <div
+      class="max-w-8xl relative mx-auto flex min-h-screen items-center px-8 py-24"
+    >
+      <div class="grid w-full items-center gap-16 lg:grid-cols-2">
+        <div class="space-y-8">
+          <div class="space-y-6">
+            <div class="h-px w-16 bg-gray-900"></div>
+            <h1
+              class="text-6xl leading-tight font-extralight tracking-tight text-gray-900 sm:text-3xl md:text-8xl"
+            >
+              404
+            </h1>
+            <p
+              class="max-w-[80%] text-xl leading-relaxed font-light text-gray-600"
+            >
+              Some who wander are lost
+            </p>
+          </div>
+
+          <div class="flex gap-6">
+            <a
+              href="/"
+              class="group transform bg-gray-900 px-8 py-4 text-sm font-light tracking-wider text-white uppercase shadow-lg transition-all duration-300 hover:-translate-y-1 hover:bg-gray-800"
+            >
+              <span class="flex items-center">
+                Home
+                <div
+                  class="ml-4 h-px w-6 bg-white transition-all duration-300 group-hover:w-8"
+                >
+                </div>
+              </span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Hero Image -->
+        <div class="relative">
+          <div class="relative overflow-hidden shadow-2xl">
+            <img
+              src={image}
+              alt="Featured Artwork"
+              class="h-[600px] w-full object-cover grayscale filter transition-all duration-1000 hover:grayscale-0"
+            />
+            <div
+              class="absolute inset-0 bg-linear-to-t from-black/20 to-transparent"
+            >
+            </div>
+          </div>
+
+          <!-- Floating Stats -->
+          <div
+            class="absolute -bottom-8 -left-8 bg-white/95 p-8 shadow-xl backdrop-blur-sm"
+          >
+            <div class="text-center">
+              <div class="mb-2 text-3xl font-light text-gray-900">
+                <span aria-hidden="true">(„• ֊ •„)੭</span>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="absolute -top-8 -right-8 bg-white/95 p-8 shadow-xl backdrop-blur-sm"
+          >
+            <div class="text-center">
+              <div class="mb-2 text-3xl font-light text-gray-900">
+                <span aria-hidden="true">¯\_(ツ)_/¯</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
   <Footer />
 </Layout>
-
-<style>
-  #main-content {
-    @apply mx-auto flex max-w-3xl flex-1 items-center justify-center;
-  }
-  .not-found-wrapper {
-    @apply mb-14 flex flex-col items-center justify-center;
-  }
-  .not-found-wrapper h1 {
-    @apply text-9xl font-bold text-skin-accent;
-  }
-  .not-found-wrapper p {
-    @apply mt-4 text-2xl sm:text-3xl;
-  }
-</style>

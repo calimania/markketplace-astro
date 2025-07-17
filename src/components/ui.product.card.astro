@@ -1,0 +1,111 @@
+---
+const { product } = Astro.props;
+import { markketplace } from "@config";
+import { type Product } from "../interfaces";
+
+const getImageUrl = (product: Product) => {
+  const { Slides: slides } = product;
+  if (product?.Thumbnail?.url) return product?.Thumbnail?.url;
+
+  if (slides && slides.length > 0) {
+    const slide = slides[0];
+    if (slide.formats?.medium) return slide.formats.medium.url;
+    if (slide.formats?.small) return slide.formats.small.url;
+    return slide.url;
+  }
+  if (product?.SEO?.metaImage?.url) return product?.SEO?.metaImage?.url;
+
+  return markketplace.defaults.product;
+};
+
+const imageUrl = getImageUrl(product);
+const price = product.usd_price || product.PRICES?.[0]?.Price;
+---
+
+<article
+  class="group hover:shadow-3xl relative overflow-hidden border border-gray-100/50 bg-white/90 shadow-2xl backdrop-blur-sm transition-all duration-700 hover:-translate-y-2"
+>
+  <a href={`/products/${product.slug}`} class="block h-full">
+    <div class="relative h-96 overflow-hidden">
+      <img
+        src={imageUrl}
+        alt={product.Name}
+        loading="lazy"
+        class="h-full w-full object-cover grayscale filter transition-transform duration-1000 group-hover:scale-110 group-hover:grayscale-0"
+      />
+      <div
+        class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+      >
+      </div>
+
+      <!-- Price badge -->
+      {
+        price && (
+          <div class="absolute top-6 right-6 bg-white/95 px-4 py-2 shadow-lg backdrop-blur-sm">
+            <span class="text-sm font-light text-gray-900">${price}</span>
+          </div>
+        )
+      }
+
+      <!-- Stock indicator -->
+      {
+        product.quantity !== null && (
+          <div class="absolute bottom-6 left-6 bg-black/80 px-3 py-1 backdrop-blur-sm">
+            <span class="text-xs font-light tracking-wider text-white uppercase">
+              {product.quantity > 0
+                ? `${product.quantity} Available`
+                : "Sold Out"}
+            </span>
+          </div>
+        )
+      }
+    </div>
+
+    <div class="flex h-full min-h-[180px] flex-col p-8">
+      <!-- Tags -->
+      {
+        product.Tag && product.Tag.length > 0 && (
+          <div class="mb-4 flex gap-2">
+            {product.Tag.slice(0, 2).map(tag => (
+              <span class="bg-gray-900 px-3 py-1 text-xs font-light tracking-wider text-white uppercase">
+                {tag.name}
+              </span>
+            ))}
+          </div>
+        )
+      }
+
+      <h3
+        class="mb-3 text-xl leading-tight font-light text-gray-900 transition-colors duration-300 group-hover:text-gray-700"
+      >
+        {product.Name}
+      </h3>
+
+      {
+        product.SEO?.metaDescription && (
+          <p class="mb-4 line-clamp-3 flex-grow text-sm leading-relaxed font-light text-gray-600">
+            {product.SEO?.metaDescription}
+          </p>
+        )
+      }
+
+      <div
+        class="flex items-center justify-between border-t border-gray-100 pt-4"
+      >
+        <span
+          class="text-xs font-light tracking-widest text-gray-500 uppercase"
+        >
+          {
+            product.quantity && product.quantity > 0
+              ? "Add to Collection"
+              : "View Details"
+          }
+        </span>
+        <div
+          class="h-px w-8 bg-gray-900 transition-all duration-300 group-hover:w-12"
+        >
+        </div>
+      </div>
+    </div>
+  </a>
+</article>

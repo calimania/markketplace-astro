@@ -20,8 +20,8 @@ const CheckoutModal: FC<Props> = ({ prices, product, store }: Props) => {
     totalPrice: 0,
     product: product.id,
     prices: [],
-    stripe_test: product?.data.Name?.match(/test/i),
-    includes_shipping: !product?.data.Name?.match(/digital/i),
+    stripe_test: product?.Name?.match(/test/i),
+    includes_shipping: !product?.Name?.match(/digital/i),
     store_id: (store?.data as any)?.documentId,
   } as PaymentLinkOptions);
 
@@ -44,7 +44,7 @@ const CheckoutModal: FC<Props> = ({ prices, product, store }: Props) => {
       option_prices.push({
         unit_amount: String(tip),
         currency: 'usd',
-        product: product?.data.SKU,
+        product: product?.SKU,
       } as Price);
     }
 
@@ -110,8 +110,8 @@ const CheckoutModal: FC<Props> = ({ prices, product, store }: Props) => {
             </button>
 
             <form
-              data-product-price={product?.data.id}
-              data-product-json={JSON.stringify(product?.data)}
+              data-product-price={product?.id}
+              data-product-json={JSON.stringify(product)}
               className="product-form-container"
             >
               <div className="hidden md:flex items-center justify-between">

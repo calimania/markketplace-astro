@@ -1,57 +1,43 @@
 ---
 import { LOCALE, SITE, markketplace } from "@config";
-import "@styles/base.css";
 import { ClientRouter } from "astro:transitions";
-import { getCollection, type CollectionEntry } from "astro:content";
+import { getCollection } from "astro:content";
 import Posthog from "@components/posthog.astro";
-import type Store from "@interfaces/Store";
+import { type LayoutProps as Props } from "./layout.d";
+import "@styles/base.css";
 
 const googleSiteVerification = import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION;
 
-export interface Props {
-  title?: string;
-  author?: string;
-  profile?: string;
-  description?: string;
-  ogImage?: string;
-  canonicalURL?: string;
-  pubDatetime?: Date;
-  modDatetime?: Date | null;
-  scrollSmooth?: boolean;
-  className?: string;
-  post?: CollectionEntry<"posts">;
-  meta?: {
-    title?: string;
-    image?: string;
-    description?: string;
-    url?: string;
-  };
+const stores = await getCollection("store");
+const store = stores?.[0]?.data;
+
+let baseUrl = Astro.site?.toString() || "https://markket.place";
+
+if (!baseUrl?.startsWith("http")) {
+  baseUrl = `https://de.markket.place/store/${store?.slug}`;
 }
-
-const stores = await getCollection("stores");
-const store: Store = stores.find(
-  store => store.data.slug == markketplace.STORE_SLUG
-)?.data as any as Store;
-
-const baseUrl = Astro.site || "https://markket.place";
 
 const {
   title = SITE.title,
   author = SITE.author,
-  profile = SITE.profile,
-  description = Astro.props.description ?? SITE.desc,
+  description = SITE.desc,
   ogImage = SITE.ogImage,
   canonicalURL = new URL(Astro.url.pathname, baseUrl).href,
-  pubDatetime,
-  modDatetime,
   post,
   scrollSmooth = false,
-  meta,
+  meta = {},
   className,
 } = Astro.props;
 
+const {
+  image,
+  /** item.createdAt  */
+  pubDatetime = store?.createdAt || "",
+  modDatetime = store?.updatedAt,
+} = meta;
+
 const socialImageURL = new URL(
-  ogImage ?? SITE.ogImage ?? "og.png",
+  image ?? ogImage ?? SITE.ogImage ?? "og.png",
   Astro.url.origin
 ).href;
 
@@ -60,13 +46,15 @@ const structuredData = {
   "@type": "BlogPosting",
   headline: `${title}`,
   image: `${socialImageURL}`,
-  datePublished: `${pubDatetime?.toISOString()}`,
-  ...(modDatetime && { dateModified: modDatetime.toISOString() }),
+  datePublished: new Date(pubDatetime).toISOString(),
+  ...(modDatetime && {
+    dateModified: new Date(modDatetime).toISOString(),
+  }),
   author: [
     {
       "@type": "Person",
       name: `${author}`,
-      url: `${profile}`,
+      url: `https://de.markket.place/store/${store?.slug}`,
     },
   ],
 };
@@ -151,12 +139,12 @@ let href = new URL(Astro.url.pathname, Astro.site || "http://markket.place");
         socialImageURL}
     />
 
-    <!-- Article Published/Modified time -->
+    <!-- Article Published/Modified time : defaults to build/deploy time -->
     {
       pubDatetime && (
         <meta
           property="article:published_time"
-          content={pubDatetime.toISOString()}
+          content={new Date(pubDatetime).toISOString()}
         />
       )
     }
@@ -164,7 +152,7 @@ let href = new URL(Astro.url.pathname, Astro.site || "http://markket.place");
       modDatetime && (
         <meta
           property="article:modified_time"
-          content={modDatetime.toISOString()}
+          content={new Date(modDatetime).toISOString()}
         />
       )
     }
@@ -176,15 +164,13 @@ let href = new URL(Astro.url.pathname, Astro.site || "http://markket.place");
     />
 
     <!-- Google Font -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
+    <!-- <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin /> -->
+    <!-- <link
       href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap"
       rel="stylesheet"
-    />
-
+    /> -->
     <meta name="theme-color" content="" />
-
     {
       // If PUBLIC_GOOGLE_SITE_VERIFICATION is set in the environment variable,
       // include google-site-verification tag in the heading
@@ -210,10 +196,11 @@ let href = new URL(Astro.url.pathname, Astro.site || "http://markket.place");
         --color-primary: var(--primary);
         --color-accent: var(--accent);
       }
+      @reference "../styles/base.css";
     </style>
     <script is:inline src="/toggle-theme.js"></script>
   </head>
-  <body class={`theme-${markketplace.style} ${className}`}>
+  <body class={`theme-${markketplace.style} ${className || ""}`}>
     <slot />
   </body>
 </html>

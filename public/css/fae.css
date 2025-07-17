@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Dancing+Script:wght@400;700&display=swap');
 body {
-  color: inherit;
+  /* color: inherit; */
 }
 /* Fairy Theme Variables */
 :root {
@@ -82,7 +82,7 @@ body {
     background: var(--fae-gradient-text);
     -webkit-background-clip: text;
     background-clip: text;
-    -webkit-text-fill-color: transparent;
+    /* -webkit-text-fill-color: transparent; */
     filter: drop-shadow(0 2px 3px var(--fae-shadow));
     margin-bottom: 1.5rem;
     font-size: 2.5rem;

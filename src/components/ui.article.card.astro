@@ -1,0 +1,100 @@
+---
+const { article } = Astro.props;
+import { slugifyStr } from "@utils/slugify";
+
+const formatDate = (dateString: string) => {
+  return new Date(dateString).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+};
+
+const getImageUrl = (cover: any) => {
+  if (cover?.formats?.large) return cover.formats.large.url;
+  if (cover?.formats?.medium) return cover.formats.medium.url;
+  if (cover?.formats?.small) return cover.formats.small.url;
+  return cover?.url || cover?.data?.attributes?.url;
+};
+
+const imageUrl = getImageUrl(article.cover);
+---
+
+<article
+  class="group hover:shadow-3xl relative overflow-hidden rounded-none border border-gray-100/50 bg-white/80 shadow-2xl backdrop-blur-sm transition-all duration-700 hover:-translate-y-3"
+>
+  <!-- // unlikely to be important, but keeping slugify for backwards compatibility, ideally slug is enforced -->
+  <a
+    href={"/blog/" + article.slug ||
+      `${new Date(article.createdAt).getFullYear()}-${slugifyStr(article.Title)}`}
+    class="block h-full"
+  >
+    <div class="relative h-80 overflow-hidden">
+      <img
+        src={imageUrl}
+        alt={article.Title}
+        loading="lazy"
+        class="h-full w-full object-cover grayscale filter transition-transform duration-1000 group-hover:scale-105 group-hover:grayscale-0"
+      />
+      <div
+        class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+      >
+      </div>
+
+      <div
+        class="absolute top-6 left-6 rounded-none bg-white/95 px-4 py-2 shadow-lg backdrop-blur-sm"
+      >
+        <time
+          datetime={article.publishedAt}
+          class="text-xs font-light tracking-widest text-gray-800 uppercase"
+        >
+          {formatDate(article.publishedAt)}
+        </time>
+      </div>
+    </div>
+
+    <div class="flex h-full min-h-[200px] flex-col p-8">
+      <!-- Tags -->
+      {
+        article.Tags && article.Tags.length > 0 && (
+          <div class="mb-6 flex gap-3">
+            {article.Tags.slice(0, 2).map(tag => (
+              <span class="rounded-none bg-gray-900 px-3 py-1 text-xs font-light tracking-wider text-white uppercase">
+                {tag.Label}
+              </span>
+            ))}
+          </div>
+        )
+      }
+
+      <h3
+        class="mb-4 text-2xl leading-tight font-light text-gray-900 transition-colors duration-300 group-hover:text-gray-700"
+      >
+        {article.Title}
+      </h3>
+
+      <p
+        class="mb-6 flex-grow text-sm leading-relaxed font-light text-gray-600"
+      >
+        {
+          article.SEO?.metaDescription ||
+            `An exploration of ${article?.Title?.toLowerCase()}`
+        }
+      </p>
+
+      <div
+        class="flex items-center justify-between border-t border-gray-100 pt-4"
+      >
+        <span
+          class="text-xs font-light tracking-widest text-gray-500 uppercase"
+        >
+          Read Article
+        </span>
+        <div
+          class="h-px w-8 bg-gray-900 transition-all duration-300 group-hover:w-12"
+        >
+        </div>
+      </div>
+    </div>
+  </a>
+</article>

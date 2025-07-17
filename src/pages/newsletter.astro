@@ -1,9 +1,6 @@
 ---
-// src/components/newsletter.astro
 import Subscribe from "@components/Subscribe";
 import { getCollection } from "astro:content";
-import { markketplace } from "@config";
-import Header from "@components/Header.astro";
 import Footer from "@components/Footer.astro";
 import Layout from "@layouts/Layout.astro";
 import Breadcrumbs from "@components/Breadcrumbs.astro";
@@ -12,70 +9,34 @@ import {
   type BlocksContent,
 } from "@strapi/blocks-react-renderer";
 import Hr from "@components/Hr.astro";
-import HeroImage from "@components/HeroImage.astro";
+import PageHeader from "@components/ui.page.header.astro";
 
-const pages = await getCollection("pages");
-const page = pages.find(page => page.data.slug === "newsletter")?.data;
-const stores = await getCollection("stores");
-const store = stores?.find(
-  store => store.data.slug === markketplace.STORE_SLUG
-);
+const page = (await getCollection("pages")).find(
+  page => page.data.slug === "newsletter"
+)?.data;
+const store = (await getCollection("store"))?.[0]?.data;
+
+const meta = {
+  title: page?.SEO?.metaTitle || "Blog",
+  image: page?.SEO?.socialImage?.url,
+  description: page?.SEO?.metaDescription,
+  url: page?.SEO?.metaUrl || "/blog",
+  pubDatetime: page?.updatedAt,
+  modDatetime: page?.createdAt,
+};
 ---
 
-<Layout
-  title={page?.SEO?.metaTitle || "Newsletter"}
-  description={page?.SEO?.metaDescription || ""}
->
-  <Header activeNav="pages" store={store} />
+<Layout meta={meta}>
+  <PageHeader page={page} default_description="Sign up for updates" />
   <Breadcrumbs />
-  <main id="main-content" class="relative overflow-hidden px-4 py-16">
-    {/* Background decoration */}
-    <div
-      class="from-accent-50/50 absolute inset-0 bg-gradient-to-br to-transparent dark:from-accent-900/20"
-      aria-hidden="true"
-    >
-      <div class="bg-grid-pattern absolute inset-0 opacity-10"></div>
-    </div>
-
-    <div class="relative mx-auto max-w-4xl">
-      {
-        page?.SEO?.socialImage && (
-          <HeroImage image={page?.SEO?.socialImage} title={page?.Title} />
-        )
-      }
-      <section id="about" class="mb-10 max-w-3xl prose-img:border-0">
-        <h1 class="mb-6 text-3xl font-bold tracking-wider sm:text-4xl">
-          {page?.Title}
-        </h1>
-        <BlocksRenderer content={page?.Content || ([] as BlocksContent[])} />
-      </section>
-
-      <section
-        class="rounded-2xl bg-white bg-opacity-90 p-8 shadow-xl backdrop-blur-sm dark:bg-gray-800 dark:bg-opacity-90"
-      >
-        <Subscribe
-          storeId={store?.id || ""}
-          storeName={store?.data?.title || ""}
-          client:load
-        />
-        <p class="mt-4 text-center text-sm text-gray-500 dark:text-gray-400">
-          Join our newsletter to get the latest updates and exclusive offers.
-        </p>
-      </section>
-    </div>
-  </main>
+  <section id="about" class="prose-img:border-0 mx-auto mb-10 max-w-3xl py-6">
+    <BlocksRenderer content={page?.Content || ([] as BlocksContent[])} />
+  </section>
+  <Subscribe
+    storeId={store?.documentId}
+    storeName={store?.title || ""}
+    client:load
+  />
   <Hr />
   <Footer />
 </Layout>
-
-<style>
-  .bg-grid-pattern {
-    background-image: linear-gradient(
-        to right,
-        rgba(128, 128, 128, 0.1) 1px,
-        transparent 1px
-      ),
-      linear-gradient(to bottom, rgba(128, 128, 128, 0.1) 1px, transparent 1px);
-    background-size: 24px 24px;
-  }
-</style>

@@ -12,6 +12,7 @@ import { SITE } from "@config";
 import HeroImage from "@components/HeroImage.astro";
 
 import { BlocksRenderer } from "@strapi/blocks-react-renderer";
+
 import { getCollection } from "astro:content";
 import type Store from "../interfaces/Store";
 import { markketplace } from "@config";
@@ -76,7 +77,7 @@ const layoutProps = {
 
   <div class="mx-auto flex w-full justify-start px-2">
     <button
-      class="focus-outline mb-2 mt-8 flex hover:opacity-75"
+      class="focus-outline mt-8 mb-2 flex hover:opacity-75"
       onclick="(() => (history.length === 1) ? window.location = '/' : history.back())()"
     >
       <svg xmlns="http://www.w3.org/2000/svg">
@@ -112,7 +113,7 @@ const layoutProps = {
       >
         <button
           id="back-to-top"
-          class="focus-outline whitespace-nowrap py-1 hover:opacity-75"
+          class="focus-outline py-1 whitespace-nowrap hover:opacity-75"
         >
           <svg xmlns="http://www.w3.org/2000/svg" class="rotate-90">
             <path
@@ -130,7 +131,7 @@ const layoutProps = {
   </main>
   <Footer />
 </Layout>
-
+<!--
 <style>
   main {
     @apply mx-auto flex w-full flex-col gap-x-10 px-4 pb-12 lg:flex-row;
@@ -138,7 +139,7 @@ const layoutProps = {
   .post-title {
     @apply text-2xl font-semibold text-skin-accent;
   }
-</style>
+</style> -->
 
 <script is:inline>
   /** Create a progress indicator

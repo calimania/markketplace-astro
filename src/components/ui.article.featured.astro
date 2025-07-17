@@ -1,0 +1,56 @@
+---
+const { article : featured }= Astro.props;
+---
+<div class="mb-24">
+  <div class="mb-12 text-center">
+    <span class="text-xs font-light tracking-widest text-gray-500 uppercase">
+      Featured
+    </span>
+  </div>
+  <div class="mx-auto max-w-6xl">
+    <article class="group hover:shadow-3xl relative overflow-hidden border border-gray-100/50 bg-white/80 shadow-2xl backdrop-blur-sm transition-all duration-700">
+      <a href={`/blog/${featured?.slug}`} class="block">
+        <div class="grid gap-0 md:grid-cols-2">
+          <div class="relative h-96 overflow-hidden md:h-[600px]">
+            <img
+              src={
+                featured?.cover?.formats?.large?.url ||
+                featured?.cover?.url
+              }
+              alt={featured?.Title}
+              class="h-full w-full object-cover grayscale filter transition-transform duration-1000 group-hover:scale-105 group-hover:grayscale-0"
+            />
+          </div>
+          <div class="flex flex-col justify-center p-12">
+            <div class="mb-6">
+              <time
+                datetime={featured.publishedAt}
+                class="text-xs font-light tracking-widest text-gray-500 uppercase"
+              >
+                {new Date(featured.publishedAt).toLocaleDateString(
+                  "en-US",
+                  { year: "numeric", month: "long", day: "numeric" }
+                )}
+              </time>
+            </div>
+
+            <h2 class="mb-6 text-4xl leading-tight font-light text-gray-900 transition-colors group-hover:text-gray-700">
+              {featured.Title}
+            </h2>
+
+            <p class="mb-8 leading-relaxed font-light text-gray-600">
+              {featured.SEO?.metaDescription}
+            </p>
+
+            <div class="flex items-center">
+              <span class="mr-4 text-xs font-light tracking-widest text-gray-900 uppercase">
+                Explore
+              </span>
+              <div class="h-px w-12 bg-gray-900 transition-all duration-300 group-hover:w-16" />
+            </div>
+          </div>
+        </div>
+      </a>
+    </article>
+  </div>
+</div>

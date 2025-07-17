@@ -1,0 +1,198 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import {marked} from 'marked';
+import { markketplace } from '@config';
+import CheckoutModal from "@components/checkout/CheckoutModal";
+
+const { product, store } = Astro.props;
+
+const htmlDescription = marked.parse(product?.data?.Description || "");
+
+const formatDate = (dateString: string) => {
+  return new Date(dateString).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+};
+
+const getImageUrl = (product: CollectionEntry<"products">["data"]) => {
+  const slides = product?.Slides || [];
+
+  if (slides && slides.length > 0) {
+    const slide = slides[0];
+    if (slide.formats?.large) return slide.formats.large.url;
+    if (slide.formats?.medium) return slide.formats.medium.url;
+    return slide.url;
+  }
+  return markketplace.defaults.product;
+};
+
+const imageUrl = getImageUrl(product.Slides);
+
+---
+ <article class="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
+    <div class="max-w-7xl mx-auto px-8 py-16">
+      <!-- Back Navigation -->
+      <div class="mb-16">
+        <a
+          href="/products"
+          class="inline-flex items-center text-gray-600 hover:text-gray-900 font-light tracking-wider uppercase text-xs transition-colors group"
+        >
+          <div class="w-8 h-px bg-gray-600 mr-4 group-hover:w-12 group-hover:bg-gray-900 transition-all duration-300"></div>
+          Back to Collection
+        </a>
+      </div>
+
+      <div class="grid lg:grid-cols-2 gap-16 items-start">
+        <!-- Product Images -->
+        <div class="space-y-8">
+          <!-- Main Image -->
+          <div class="relative overflow-hidden shadow-2xl bg-white">
+            <img
+              src={imageUrl}
+              alt={product.Name}
+              class="w-full h-[600px] object-cover filter grayscale hover:grayscale-0 transition-all duration-1000"
+            />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent"></div>
+          </div>
+
+          <!-- Additional Images Grid -->
+          {product.Slides && product.Slides.length > 1 && (
+            <div class="grid grid-cols-3 gap-4">
+              {product.Slides.slice(1, 4).map(slide => (
+                <div key={slide.id} class="relative overflow-hidden shadow-lg bg-white">
+                  <img
+                    src={slide.formats?.medium?.url || slide.url}
+                    alt={slide.alternativeText || product.Name}
+                    class="w-full h-32 object-cover filter grayscale hover:grayscale-0 transition-all duration-500"
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <!-- Product Details -->
+        <div class="space-y-8">
+          <!-- Header -->
+          <header class="space-y-6">
+            <div class="space-y-2">
+              <p class="text-xs font-light tracking-widest text-gray-500 uppercase">
+                {formatDate(product.createdAt)}
+              </p>
+              <h1 class="text-4xl md:text-5xl font-extralight text-gray-900 leading-tight tracking-tight">
+                {product.Name}
+              </h1>
+            </div>
+
+            {product.Tag && product.Tag.length > 0 && (
+              <div class="flex gap-3">
+                {product.Tag.map((tag: any) => (
+                  <span
+                    class="px-4 py-2 bg-gray-900 text-white text-xs font-light tracking-wider uppercase"
+                  >
+                    {tag.Label}
+                  </span>
+                ))}
+              </div>
+            )}
+          </header>
+
+          <!-- Price -->
+          {product?.usd_price && (
+            <div class="bg-white/80 backdrop-blur-sm border border-gray-100/50 p-8 shadow-xl">
+              <div class="text-center">
+                <p class="text-xs font-light tracking-widest text-gray-500 uppercase mb-2">Price</p>
+                <p class="text-4xl font-extralight text-gray-900">${product?.usd_price}</p>
+              </div>
+            </div>
+          )}
+
+          <!-- Description -->
+          {product.Description && (
+            <div class="space-y-4">
+              <div class="w-16 h-px bg-gray-900"></div>
+              <p class="text-lg text-gray-700 font-light leading-relaxed">
+                {product.Description}
+              </p>
+            </div>
+          )}
+
+          <!-- Product Details -->
+          <div class="bg-gray-50 p-8 space-y-4">
+            <h3 class="text-xl font-light text-gray-900 mb-6">Details</h3>
+            <div class="space-y-3 text-sm">
+              <div class="flex justify-between">
+                <span class="text-gray-600">SKU</span>
+                <span class="font-light">{product.SKU}</span>
+              </div>
+              <div>
+                <CheckoutModal
+                  client:load
+                  prices={product.PRICES}
+                  product={product}
+                  store={store as CollectionEntry<"stores">}
+                />
+              </div>
+              {product.quantity !== null && (
+                <div class="flex justify-between">
+                  <span class="text-gray-600">Availability</span>
+                  <span class={`font-light ${product.quantity > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                    {product.quantity > 0 ? `${product.quantity} Available` : 'Sold Out'}
+                  </span>
+                </div>
+              )}
+              {product.amountSold !== null && product.amountSold > 0 && (
+                <div class="flex justify-between">
+                  <span class="text-gray-600">Sold</span>
+                  <span class="font-light">{product.amountSold}</span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="space-y-4">
+            {product.quantity && product.quantity > 0 ? (
+              <button class="w-full px-8 py-4 bg-gray-900 text-white font-light tracking-wider uppercase text-sm hover:bg-gray-800 transition-all duration-300 transform hover:-translate-y-1 shadow-lg">
+                Add to Collection
+              </button>
+            ) : (
+              <button disabled class="w-full px-8 py-4 bg-gray-400 text-white font-light tracking-wider uppercase text-sm cursor-not-allowed">
+                Sold Out
+              </button>
+            )}
+
+            <button class="w-full px-8 py-4 border border-gray-900 text-gray-900 font-light tracking-wider uppercase text-sm hover:bg-gray-900 hover:text-white transition-all duration-300">
+              Inquire About This Piece
+            </button>
+          </div>
+
+          <!-- Additional Info -->
+          <div class="pt-8 border-t border-gray-200">
+            <div class="space-y-4 text-sm text-gray-600 font-light" set:html={htmlDescription}>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Related Products -->
+      <section class="mt-24 pt-16 border-t border-gray-200">
+        <div class="text-center mb-16">
+          <h3 class="text-3xl font-light text-gray-900 mb-4">You May Also Appreciate</h3>
+          <div class="w-16 h-px bg-gray-900 mx-auto"></div>
+        </div>
+
+        <div class="text-center">
+          <a
+            href="/products"
+            class="inline-flex items-center px-12 py-4 border border-gray-900 text-gray-900 font-light tracking-wider uppercase text-xs hover:bg-gray-900 hover:text-white transition-all duration-300"
+          >
+            View Full Collection
+            <div class="w-6 h-px bg-gray-900 ml-4 group-hover:w-8 group-hover:bg-white transition-all duration-300"></div>
+          </a>
+        </div>
+      </section>
+    </div>
+  </article>

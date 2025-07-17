@@ -1,0 +1,139 @@
+---
+import type { Article } from "@interfaces/Article";
+import { BlocksRenderer } from "@strapi/blocks-react-renderer";
+
+export interface Props {
+  article: Article["data"];
+}
+
+const { article } = Astro.props;
+
+const formatDate = (dateString: string) => {
+  return new Date(dateString).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+};
+
+const getImageUrl = (article: Article["data"]) => {
+  return article?.cover?.url || article?.SEO?.socialImage?.url;
+};
+
+const imageUrl = getImageUrl(article);
+---
+
+<article
+  class="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100"
+>
+  <div class="mx-auto max-w-5xl px-8 py-16">
+    <!-- Back Navigation -->
+    <div class="mb-16">
+      <a
+        href="/blog"
+        class="group inline-flex items-center text-xs font-light tracking-wider text-gray-600 uppercase transition-colors hover:text-gray-900"
+      >
+        <div
+          class="mr-4 h-px w-8 bg-gray-600 transition-all duration-300 group-hover:w-12 group-hover:bg-gray-900"
+        >
+        </div>
+        Back to Blog
+      </a>
+    </div>
+
+    <!-- Article Header -->
+    <header class="mb-20 text-center">
+      <div class="mb-8">
+        <time
+          datetime={article.publishedAt}
+          class="text-xs font-light tracking-widest text-gray-500 uppercase"
+        >
+          {formatDate(article.publishedAt)}
+        </time>
+      </div>
+
+      <h1
+        class="mb-12 text-5xl leading-tight font-extralight tracking-tight text-gray-900 md:text-7xl"
+      >
+        {article.Title}
+      </h1>
+
+      {
+        article?.Tags?.length > 0 && (
+          <div class="mb-12 flex justify-center gap-4">
+            {article.Tags.map((tag: Article["data"]["Tags"]) => (
+              <span class="bg-gray-900 px-4 py-2 text-xs font-light tracking-wider text-white uppercase">
+                {tag.Label}
+              </span>
+            ))}
+          </div>
+        )
+      }
+
+      {
+        article.SEO?.metaDescription && (
+          <p class="mx-auto max-w-3xl text-xl leading-relaxed font-light text-gray-600">
+            {article.SEO.metaDescription}
+          </p>
+        )
+      }
+
+      <div class="mt-12">
+        <div class="mx-auto h-px w-24 bg-gray-900"></div>
+      </div>
+    </header>
+
+    <!-- Hero Image -->
+    <div class="relative mb-20 overflow-hidden shadow-2xl">
+      <img
+        src={imageUrl}
+        alt={article.Title}
+        class="h-[70vh] w-full object-cover grayscale filter transition-all duration-1000 hover:grayscale-0"
+      />
+      <div
+        class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"
+      >
+      </div>
+    </div>
+
+    <!-- Content Area -->
+    <div class="prose prose-lg mb-20 max-w-none">
+      <div
+        class="mb-16 border border-gray-100/50 bg-white/80 p-12 shadow-xl backdrop-blur-sm"
+      >
+        <div class="mb-8 text-center">
+          <div class="mx-auto mb-6 h-px w-16 bg-gray-900"></div>
+        </div>
+        <div class="space-y-6 leading-relaxed font-light text-gray-700">
+          <article id="article" class="blog-post mt-8 w-full">
+            <BlocksRenderer content={article.Content} />
+          </article>
+        </div>
+      </div>
+    </div>
+    <!-- Article Footer -->
+    <footer class="border-t border-gray-200 pt-16">
+      <div class="flex flex-wrap items-center justify-between gap-8">
+        <a
+          href="/blog"
+          class="group inline-flex items-center border border-gray-200 bg-white px-8 py-4 text-xs font-light tracking-wider text-gray-900 uppercase shadow-lg transition-colors hover:bg-gray-50"
+        >
+          <div
+            class="mr-4 h-px w-6 bg-gray-900 transition-all duration-300 group-hover:w-8"
+          >
+          </div>
+          More Articles
+        </a>
+
+        <!-- <div class="text-center">
+          <p class="mb-4 font-light text-gray-600">Appreciate this piece?</p>
+          <button
+            class="transform bg-gray-900 px-8 py-4 text-xs font-light tracking-wider text-white uppercase shadow-lg transition-all duration-300 hover:-translate-y-1 hover:bg-gray-800"
+          >
+            Subscribe to Gallery Updates
+          </button>
+        </div> -->
+      </div>
+    </footer>
+  </div>
+</article>

@@ -1,10 +1,10 @@
 import { defineConfig } from "astro/config";
-import tailwind from "@astrojs/tailwind";
 import react from "@astrojs/react";
 import remarkToc from "remark-toc";
 import remarkCollapse from "remark-collapse";
 import sitemap from "@astrojs/sitemap";
 import { markketplace } from "./src/config";
+import tailwindcss from "@tailwindcss/vite";
 
 /**
  * @type {import('astro/types').RuntimeConfig}
@@ -12,9 +12,6 @@ import { markketplace } from "./src/config";
 export default defineConfig({
   site: markketplace?.url,
   integrations: [
-    tailwind({
-      applyBaseStyles: true,
-    }),
     react(),
     sitemap(),
   ],
@@ -41,7 +38,10 @@ export default defineConfig({
     },
     ssr: {
       noExternal: [],
-    }
+    },
+    plugins: [
+      tailwindcss()
+    ],
   },
   scopedStyleStrategy: "where",
   outDir: "./dist",

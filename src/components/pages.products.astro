@@ -1,0 +1,73 @@
+---
+import type { CollectionEntry } from "astro:content";
+import ProductCard from "./ui.product.card.astro";
+
+export interface Props {
+  products: CollectionEntry<"products">[];
+  page?: CollectionEntry<"pages">["data"];
+  title?: string;
+}
+
+const { products, page } = Astro.props;
+---
+
+<section
+  class="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 py-24"
+>
+  <div class="max-w-8xl mx-auto px-8">
+    <header class="mb-20 text-center">
+      <div class="mb-8">
+        <div class="mx-auto mb-8 h-16 w-px bg-gray-900"></div>
+      </div>
+
+      <h1
+        class="mb-8 text-7xl font-extralight tracking-tight text-gray-900 md:text-8xl"
+      >
+        {page?.Title || "Collection"}
+      </h1>
+
+      <p
+        class="mx-auto max-w-2xl text-lg leading-relaxed font-light tracking-wide text-gray-600"
+      >
+        Curated pieces for the discerning collector. Each work tells a story,
+        each piece holds meaning.
+      </p>
+
+      <div class="mt-12">
+        <div class="mx-auto h-px w-24 bg-gray-900"></div>
+      </div>
+    </header>
+
+    <div class="mb-20">
+      <div class="mb-16 text-center">
+        <span
+          class="text-xs font-light tracking-widest text-gray-500 uppercase"
+        >
+          Available Works
+        </span>
+      </div>
+
+      <div
+        class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+      >
+        {products.map(product => <ProductCard product={product?.data} />)}
+      </div>
+    </div>
+
+    {
+      products?.length === 0 && (
+        <div class="py-32 text-center">
+          <div class="mb-8">
+            <div class="mx-auto h-16 w-px bg-gray-300" />
+          </div>
+          <h3 class="mb-6 text-3xl font-light text-gray-900">
+            Collection Coming Soon
+          </h3>
+          <p class="font-light text-gray-600">
+            Our curators are selecting extraordinary pieces for you
+          </p>
+        </div>
+      )
+    }
+  </div>
+</section>

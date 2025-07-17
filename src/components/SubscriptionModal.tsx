@@ -18,7 +18,7 @@ const SubscriptionModal: React.FC<Props> = ({
   onClose,
 }) => {
   return (
-    <div className="modal-content bg-skin-card p-6 rounded-lg max-w-lg w-full mb-[600px] shadow-2xl">
+    <div className="modal-content bg-white p-6 rounded-lg max-w-lg w-full mb-[600px] shadow-2xl">
       <div className="flex justify-center items-center relative">
         <h2 className="text-lg font-semibold text-gray-800 flex items-center">
           {error ? title : `🎉 ${title} ✨`}

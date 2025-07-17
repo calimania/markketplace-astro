@@ -24,49 +24,29 @@ breadcrumbList[0] === "tags" &&
   );
 ---
 
-<nav class="breadcrumb" aria-label="breadcrumb">
-  <ul>
-    <li>
+<div class="py-6">
+  <nav aria-label="breadcrumb">
+    <span class="pr-2 pl-4 text-blue-700">
       <a href="/">Home</a>
-      <span aria-hidden="true">&raquo;</span>
-    </li>
+      &raquo;
+    </span>
     {
       breadcrumbList.map((breadcrumb, index) =>
         index + 1 === breadcrumbList.length ? (
-          <li>
-            <span
-              class={`${index > 0 ? "lowercase" : "capitalize"}`}
-              aria-current="page"
-            >
-              {/* make the last part lowercase in Home > Tags > some-tag */}
-              {decodeURIComponent(breadcrumb)}
-            </span>
-          </li>
+          <span
+            class={`${index > 0 ? "lowercase" : "capitalize"} pr-4`}
+            aria-current="page"
+          >
+            {/* make the last part lowercase in Home > Tags > some-tag */}
+            {decodeURIComponent(breadcrumb)}
+          </span>
         ) : (
-          <li>
+          <span class="pr-4">
             <a href={`/${breadcrumb}/`}>{breadcrumb}</a>
             <span aria-hidden="true">&raquo;</span>
-          </li>
+          </span>
         )
       )
     }
-  </ul>
-</nav>
-
-<style>
-  .breadcrumb {
-    @apply px-10 mb-4 mt-8 w-full;
-  }
-  .breadcrumb ul li {
-    @apply inline;
-  }
-  .breadcrumb ul li a {
-    @apply capitalize opacity-70;
-  }
-  .breadcrumb ul li span {
-    @apply opacity-70;
-  }
-  .breadcrumb ul li:not(:last-child) a {
-    @apply hover:opacity-100;
-  }
-</style>
+  </nav>
+</div>

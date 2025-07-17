@@ -1,0 +1,28 @@
+---
+const { page, default_description = 'A curated collection of artistic expressions, creative insights, and visual narratives' } = Astro.props;
+---
+
+<section
+  class="min-h-[33%] bg-gradient-to-br from-gray-50 via-white to-gray-100 py-24"
+>
+  <div class="max-w-8xl mx-auto px-8">
+    <header class="mb-20 text-center">
+      <div class="mb-8">
+        <div class="mx-auto mb-8 h-16 w-px bg-gray-900"></div>
+      </div>
+      <h1
+        class="mb-8 text-7xl font-extralight tracking-tight text-gray-900 md:text-8xl"
+      >
+        {page?.Title || "Jøurnal"}
+      </h1>
+      <p
+        class="mx-auto max-w-2xl text-lg leading-relaxed font-light tracking-wide text-gray-600"
+      >
+        {page?.SEO?.metaDescription || default_description}
+      </p>
+      <div class="mt-12">
+        <div class="mx-auto h-px w-24 bg-gray-900"></div>
+      </div>
+    </header>
+  </div>
+</section>

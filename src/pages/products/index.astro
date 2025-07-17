@@ -6,9 +6,9 @@ import Header from "@components/Header.astro";
 import Footer from "@components/Footer.astro";
 import Pagination from "@components/Pagination.astro";
 import Card from "@components/Card";
-import { SITE } from "@config";
 import HeroImage from "@components/HeroImage.astro";
 import Hr from "@components/Hr.astro";
+import ProductsPage from "@components/pages.products.astro";
 
 export interface Props {
   currentPage: number;
@@ -17,82 +17,42 @@ export interface Props {
 }
 
 import { getCollection } from "astro:content";
-import type Store from "@interfaces/Store";
 import { slugifyStr } from "@utils/slugify";
-import { markketplace } from "@config";
 
-const stores = await getCollection("stores");
-const store = stores.find(
-  (store: Store) => store.data.slug === markketplace.STORE_SLUG
-);
-
+const store = (await getCollection("store"))?.[0]?.data;
+const page = (await getCollection("pages"))?.find(
+  (p: any) => p.data.slug == "products"
+)?.data;
 const products = await getCollection("products");
+import {
+  BlocksRenderer,
+  type BlocksContent,
+} from "@strapi/blocks-react-renderer";
 
 const { currentPage, totalPages } = Astro.props;
+const meta = {
+  title: page?.SEO?.metaTitle || `${store?.title} Catalogue`,
+  image: page?.SEO?.socialImage?.url,
+  description: page?.SEO?.metaDescription,
+  url: page?.SEO?.metaUrl || "/products",
+  pubDatetime: page?.updatedAt,
+  modDatetime: page?.createdAt,
+};
 ---
 
-<Layout
-  title={`Posts | ${SITE.title}`}
-  meta={{
-    title: "Products",
-    description: "Physical & Digital offers from our collective",
-  }}
->
-  <Header activeNav="products" store={store} products={products} />
-  <main id="main-content">
-    <section id="about" class="mb-10 max-w-4xl mt-4 prose-img:border-0">
-      {
-        store?.data?.SEO?.socialImage && (
-          <HeroImage
-            image={store?.data?.SEO?.socialImage}
-            title={store?.data?.title}
-          />
-        )
-      }
-      <h1 class="text-2xl tracking-wider sm:text-3xl mt-2">
-        {store?.data?.title}
-      </h1>
-      <p>{store?.data.Description}</p>
-    </section>
-    <Hr />
-  </main>
-  <Main
-    pageTitle="Products"
-    pageDesc="Some products from artists in this markkët instance"
-  >
-    <ul class="-mx-4 flex flex-wrap">
-      {
-        products.map(({ data }) => (
-          <Card
-            href={`/products/${data.slug || slugifyStr(data.Name)}`}
-            tags={[]}
-            image={data.Thumbnail || data.SEO?.socialImage}
-            frontmatter={{
-              author: "x",
-              title: data.Name || data.SEO?.metaTitle || "---",
-              pubDatetime: new Date(data.createdAt),
-              modDatetime: new Date(data.updatedAt),
-              description: data.SEO?.metaDescription || data.Description || "",
-              SEO: {
-                ...data.SEO,
-                metaTitle: data.SEO?.metaTitle || data.Name || "Store",
-                socialImage: {
-                  url: data.SEO?.socialImage?.url || data.Thumbnail?.url,
-                },
-              },
-            }}
-          />
-        ))
-      }
-    </ul>
-  </Main>
-
+<Layout meta={meta}>
+  <ProductsPage products={products} page={page} />
+  <!--
   <Pagination
     {currentPage}
     {totalPages}
     prevUrl={`/blog${currentPage - 1 !== 1 ? "/" + (currentPage - 1) : ""}/`}
     nextUrl={`/blog/${currentPage + 1}/`}
-  />
-
+  /> -->
+  <section class="container mx-auto max-w-4xl px-4 py-12 sm:px-6">
+    <div class="prose prose-lg dark:prose-invert max-w-none">
+      <BlocksRenderer content={page?.Content || ([] as BlocksContent[])} />
+    </div>
+  </section>
   <Footer noMarginTop={totalPages > 1} activeNav="products" />
 </Layout>

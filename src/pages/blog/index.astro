@@ -1,15 +1,32 @@
 ---
 import { getCollection } from "astro:content";
-import Posts from "@layouts/Posts.astro";
 import getPagination from "@utils/getPagination";
+import Layout from "@layouts/Layout.astro";
+import ArticlesPage from "@components/pages.articles.astro";
+import Footer from "@components/Footer.astro";
 
 const posts = await getCollection("posts");
+
+const pages = await getCollection("pages");
+const blogPage = pages.find(p => p.data.slug == "blog")?.data;
 
 const pagination = getPagination({
   posts,
   page: 1,
   isIndex: true,
 });
+
+const meta = {
+  title: blogPage?.SEO?.metaTitle || "Blog",
+  image: blogPage?.SEO?.socialImage?.url,
+  description: blogPage?.SEO?.metaDescription,
+  url: blogPage?.SEO?.metaUrl || "/blog",
+  pubDatetime: blogPage?.updatedAt,
+  modDatetime: blogPage?.createdAt,
+};
 ---
 
-<Posts {...pagination} />
+<Layout meta={meta}>
+  <ArticlesPage pagination={pagination} page={blogPage} />
+  <Footer />
+</Layout>

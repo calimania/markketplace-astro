@@ -26,7 +26,11 @@ export const markketplace = {
   POSTHOG_ID: POSTHOG_ID as string || '',
   url: BASE_URL.startsWith('http') ? BASE_URL : 'https://markket.place/',
   STRIPE_PUBLISHABLE_KEY: PUBLIC_STRIPE_PUBLISHABLE_KEY || '',
-  style: MARKKET_STYLE || 'markket'
+  style: MARKKET_STYLE || 'markket',
+  defaults: {
+    hero: 'https://markketplace.nyc3.digitaloceanspaces.com/uploads/f69f2055647b83d6d921f42cf6dda20e.jpg',
+    product: 'https://markketplace.nyc3.digitaloceanspaces.com/uploads/a686ab9808e93237df4dfd7a72b4e743.png',
+  }
 };
 
 /**q

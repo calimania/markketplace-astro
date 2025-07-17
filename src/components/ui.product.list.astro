@@ -1,0 +1,45 @@
+---
+const { products, page } = Astro.props;
+import ProductCard from "./ui.product.card.astro";
+---
+
+<section class="bg-white py-24">
+  <div class="max-w-8xl mx-auto px-8">
+    <header class="mb-20 text-center">
+      <div class="mb-8">
+        <div class="mx-auto mb-8 h-16 w-px bg-gray-900"></div>
+      </div>
+      <h2
+        class="mb-8 text-5xl font-extralight tracking-tight text-gray-900 md:text-6xl"
+      >
+        {page?.Title || "Featured Collection"}
+      </h2>
+      <p
+        class="mx-auto max-w-2xl text-lg leading-relaxed font-light text-gray-600"
+      >
+        {
+          page?.SEO?.metaDescription ||
+            "Defining contemporary artistic excellence"
+        }
+      </p>
+      <div class="mt-12">
+        <div class="mx-auto h-px w-24 bg-gray-900"></div>
+      </div>
+    </header>
+    <div class="mb-16 grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-3">
+      {products.map((product: any) => <ProductCard product={product?.data} />)}
+    </div>
+    <div class="text-center">
+      <a
+        href="/products"
+        class="group inline-flex items-center border border-gray-900 px-12 py-4 text-sm font-light tracking-wider text-gray-900 uppercase transition-all duration-300 hover:bg-gray-900 hover:text-white"
+      >
+        View Full Collection
+        <div
+          class="ml-4 h-px w-6 bg-gray-900 transition-all duration-300 group-hover:w-8 group-hover:bg-white"
+        >
+        </div>
+      </a>
+    </div>
+  </div>
+</section>

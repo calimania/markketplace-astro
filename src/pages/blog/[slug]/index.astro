@@ -1,23 +1,42 @@
 ---
 import { type CollectionEntry, getCollection } from "astro:content";
-import Posts from "@layouts/Posts.astro";
-import PostDetails from "@layouts/PostDetails.astro";
 import getPageNumbers from "@utils/getPageNumbers";
 import getPagination from "@utils/getPagination";
 import { slugifyStr } from "@utils/slugify";
+import ArticlesPage from "@components/pages.articles.astro";
+import ArticlePage from "@components/pages.article.astro";
+import Layout from "@layouts/Layout.astro";
+import Footer from "@components/Footer.astro";
+import type { Article } from "@interfaces/Article";
 
 export interface Props {
-  post: CollectionEntry<"posts">;
+  post: Article["data"];
+  meta: {};
 }
+
+const pages = await getCollection("pages");
+const blogPage = pages.find(p => p.data.slug == "blog")?.data;
 
 export async function getStaticPaths() {
   const posts = await getCollection("posts");
 
   const postResult = posts.map(post => ({
     params: {
-      slug: `${new Date(post.data.updatedAt).getFullYear()}-${slugifyStr(post.data.Title)}`,
+      slug:
+        post.data.slug ||
+        `${new Date(post.data.updatedAt).getFullYear()}-${slugifyStr(post.data.Title)}`,
     },
-    props: { post: post },
+    props: {
+      post: post.data,
+      meta: {
+        title: post.data?.SEO?.metaTitle || "Blog Post",
+        image: post.data?.SEO?.socialImage?.url,
+        description: post.data?.SEO?.metaDescription,
+        url: post.data?.SEO?.metaUrl || `/blog/${post?.data?.slug}`,
+        pubDatetime: post.data?.updatedAt,
+        modDatetime: post.data?.createdAt,
+      },
+    },
   }));
 
   const pagePaths = getPageNumbers(posts.length).map(pageNum => ({
@@ -28,7 +47,7 @@ export async function getStaticPaths() {
 }
 
 const { slug } = Astro.params;
-const { post } = Astro.props;
+const { post, meta } = Astro.props;
 
 const posts = await getCollection("posts");
 
@@ -38,4 +57,15 @@ const pagination = getPagination({
 });
 ---
 
-{post ? <PostDetails post={post} /> : <Posts {...pagination} />}
+<Layout meta={meta}>
+  {!post && <ArticlesPage pagination={pagination} page={blogPage} />}}
+  {
+    post && (
+      <>
+        <ArticlePage article={post} />
+        {/* // related articles */}
+      </>
+    )
+  }
+  <Footer />
+</Layout>

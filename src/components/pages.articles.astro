@@ -1,0 +1,87 @@
+---
+import ArticleCard from "@components/ui.article.card.astro";
+import Pagination from "@components/Pagination.astro";
+import type { Article } from "@interfaces/Article";
+import FeaturedArticle from "./ui.article.featured.astro";
+
+const { pagination, page } = Astro.props;
+const { currentPage, totalPages, paginatedPosts } = pagination;
+
+const featured = paginatedPosts?.[0]?.data;
+
+const default_description =
+  "A curated collection of artistic expressions, creative insights, and visual narratives";
+---
+
+<section
+  class="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 py-24"
+>
+  <div class="max-w-8xl mx-auto px-8">
+    <header class="mb-20 text-center">
+      <div class="mb-8">
+        <div class="mx-auto mb-8 h-16 w-px bg-gray-900"></div>
+      </div>
+      <h1
+        class="mb-8 text-7xl font-extralight tracking-tight text-gray-900 md:text-8xl"
+      >
+        {page?.Title || "Jøurnal"}
+      </h1>
+      <p
+        class="mx-auto max-w-2xl text-lg leading-relaxed font-light tracking-wide text-gray-600"
+      >
+        {page?.SEO?.metaDescription || default_description}
+      </p>
+      <div class="mt-12">
+        <div class="mx-auto h-px w-24 bg-gray-900"></div>
+      </div>
+    </header>
+    {
+      paginatedPosts.length === 0 ? (
+        <div class="py-32 text-center">
+          <div class="mt-8 mb-8">
+            <div class="mx-auto h-16 w-px bg-gray-300" />
+          </div>
+          <h3 class="mb-6 text-3xl font-light text-gray-900">
+            Updates Coming Soon
+          </h3>
+          <p class="font-light text-gray-600">
+            A blog post is never late, Frodo Baggins. Nor is it early. It
+            arrives precisely when is meant to
+          </p>
+          <div class="mt-8 mb-8">
+            <div class="mx-auto h-16 w-px bg-gray-300" />
+          </div>
+        </div>
+      ) : (
+        <>
+          {featured && <FeaturedArticle article={featured} />}
+          <div class="mb-20">
+            {paginatedPosts.length > 1 && (
+              <div class="mb-16 text-center">
+                <span class="text-xs font-light tracking-widest text-gray-500 uppercase">
+                  Collection
+                </span>
+              </div>
+               <div class="grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-3">
+                {paginatedPosts.slice(1).map((article: Article) => (
+                  <ArticleCard article={article?.data} key={article.id} />
+                ))}
+              </div>
+            )}
+          </div>
+        </>
+      )
+    }
+    {
+      totalPages > 1 && (
+        <Pagination
+          {currentPage}
+          {totalPages}
+          prevUrl={`/blog${currentPage - 1 !== 1 ? "/" + (currentPage - 1) : ""}/`}
+          nextUrl={`/blog/${currentPage + 1}/`}
+        />
+      )
+    }
+  </div>
+
+</section>

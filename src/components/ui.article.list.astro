@@ -1,0 +1,54 @@
+---
+const { articles, page } = Astro.props;
+import ArticleCard from "./ui.article.card.astro";
+---
+
+<section class="bg-gradient-to-br from-gray-50 to-white py-24">
+  <div class="max-w-8xl mx-auto px-8">
+    <header class="mb-20 text-center">
+      <div class="mb-8">
+        <span
+          class="text-xs font-light tracking-widest text-gray-500 uppercase"
+        >
+          Insights
+        </span>
+      </div>
+
+      <h2
+        class="mb-8 text-5xl font-extralight tracking-tight text-gray-900 md:text-6xl"
+      >
+        {page?.Title || "Art Journal"}
+      </h2>
+
+      <p
+        class="mx-auto max-w-2xl text-lg leading-relaxed font-light text-gray-600"
+      >
+        {
+          page?.SEO?.metaDescription ||
+            "Explore the stories behind the art, artist interviews, and collecting insights"
+        }
+      </p>
+
+      <div class="mt-12">
+        <div class="mx-auto h-px w-24 bg-gray-900"></div>
+      </div>
+    </header>
+
+    <div class="mb-16 grid grid-cols-1 gap-12 md:grid-cols-2">
+      {articles.map((article: any) => <ArticleCard article={article?.data} />)}
+    </div>
+
+    <div class="text-center">
+      <a
+        href="/blog"
+        class="group inline-flex transform items-center bg-gray-900 px-12 py-4 text-sm font-light tracking-wider text-white uppercase shadow-lg transition-all duration-300 hover:-translate-y-1 hover:bg-gray-800"
+      >
+        Read More Stories
+        <div
+          class="ml-4 h-px w-6 bg-white transition-all duration-300 group-hover:w-8"
+        >
+        </div>
+      </a>
+    </div>
+  </div>
+</section>

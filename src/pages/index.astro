@@ -1,250 +1,159 @@
 ---
 import Layout from "@layouts/Layout.astro";
-import Header from "@components/Header.astro";
 import Footer from "@components/Footer.astro";
-import LinkButton from "@components/LinkButton.astro";
-import Hr from "@components/Hr.astro";
-import Card from "@components/Card";
-// import Socials from "@components/Socials.astro";
-import { SITE,  } from "@config";
-import { IconRss } from '@tabler/icons-react';
+// import { slugifyStr } from "@utils/slugify";
+// import AlbumsGrid from "@components/albums.grid";
+import { marked } from "marked";
 import { getCollection } from "astro:content";
-import type Store from "../interfaces/Store";
-import type Page from "../interfaces/Page";
-import type Product from "../interfaces/Product";
-import type Article from "../interfaces/Article";
-
+// import { SITE } from "@config";
 import {
   BlocksRenderer,
   type BlocksContent,
 } from "@strapi/blocks-react-renderer";
-import { slugifyStr } from "@utils/slugify";
-import { markketplace } from "@config";
-import { marked } from "marked";
 
-const stores = await getCollection("stores");
-const store = stores.find(
-  (store: any) => store.data.slug === markketplace.STORE_SLUG
-)?.data as Store | undefined;
+import UiHero from "@components/ui.hero.astro";
+import ArticleList from "@components/ui.article.list.astro";
+import ProductList from "@components/ui.product.list.astro";
 
-const products = (await getCollection("products")) as any as {
-  data: Product;
-}[];
+const store = (await getCollection("store"))?.[0]?.data;
 
-const posts = await getCollection("posts") as any as { data: Article}[];
+const products = ((await getCollection("products")) || [])?.splice(0, 3);
 
-// const socialCount = SOCIALS.filter(social => social.active).length;
-
+const posts = ((await getCollection("posts")) || [])?.splice(0, 4);
 const pages = await getCollection("pages");
 
-const homePage = pages.find((page: any) => page.data.slug === "home")?.data as
-  | Page
-  | undefined;
+const homePage = pages.find((page: any) => page.data.slug == "home")?.data;
+const blogPage = pages.find((page: any) => page.data.slug == "blog")?.data;
+const productsPage = pages.find(
+  (page: any) => page.data.slug == "products"
+)?.data;
 
 const links = store?.URLS || [];
 
 const content = marked.parse(store?.Description || "");
 
-// const products = store?.products?.data || [];
+const meta = {
+  title:
+    homePage?.SEO?.metaTitle ||
+    store?.SEO?.metaTitle ||
+    store?.title ||
+    "Markkët",
+  image: homePage?.SEO?.socialImage?.url || store?.SEO?.socialImage?.url,
+  description: homePage?.SEO?.metaDescription || store?.SEO?.metaDescription,
+  url: homePage?.SEO?.metaUrl || "/",
+};
 ---
 
-<Layout title={`Home | ${SITE.title}`}>
-  <Header store={{data: store as Store }} products={products} />
-  <main id="main-content">
-    <section id="hero">
-      <h1>{store?.title || "Markketplace"}</h1>
-      <a
-        target="_blank"
-        href="/rss.xml"
-        class="rss-link"
-        aria-label="rss feed"
-        title="RSS Feed"
+<Layout meta={meta}>
+  <UiHero
+    store={store}
+    page={homePage}
+    blogPage={blogPage}
+    productsPage={productsPage}
+  />
+  <ProductList products={products} page={productsPage} />
+  <ArticleList articles={posts} page={blogPage} />
+  <main>
+    <section
+      class="from-accent-100 relative overflow-hidden bg-linear-to-br to-white dark:from-gray-900 dark:to-gray-800"
+    >
+      <div
+        class="relative z-10 container mx-auto max-w-6xl px-4 py-20 sm:px-6 lg:px-8"
       >
-        <IconRss size={18} />
-        <span class="sr-only">RSS Feed</span>
-      </a>
-
-      <p class="sparkle">
-        <strong>
-          {
-            homePage?.SEO?.metaDescription ||
-              store?.Description ||
-              "A simple and minimal Markketplace theme."
-          }
-        </strong>
-      </p>
-      {
-        store?.Logo?.url && (
-          <img
-            src={store?.Logo.url}
-            alt={store.title}
-            class="h-24 w-24 rounded-full"
-          />
-        )
-      }
-    </section>
-    <Hr />
-    <section class="">
-      <BlocksRenderer
-        content={(homePage?.Content || []) as BlocksContent}
-      />
-    </section>
-    <Hr />
-    <section>
-      {
-        links && links.length > 0 && (
-          <div>
-            <div class="mb-12 mt-6">
-              <h2>Links</h2>
-              {links.map(link => {
-                return (
-                  <p class="mb-3">
-                    <LinkButton
-                      href={link.URL}
-                      className="underline decoration-dashed underline-offset-4 hover:text-skin-accent"
-                    >
-                      {link.Label}
-                    </LinkButton>
-                  </p>
-                );
-              })}
-            </div>
-          </div>
-        <Hr />
-        )
-      }
-
-{
-  posts.length > 0 && (
-    <section id="recent-posts">
-      <h1>Recent Posts</h1>
-      <ul class="-mx-4 flex flex-wrap">
-        {posts.map(
-          ({ data}, index) =>
-            index < SITE.postPerIndex && (
-              <Card
-                href={`/blog/${new Date(data.updatedAt).getFullYear()}-${slugifyStr(data.Title)}`}
-                image={data?.cover || data.SEO?.metaImage}
-                tags={ data.Tags?.map(tag => tag.Label) as string[]}
-                frontmatter={{
-                  author: "x",
-                  title: data.Title,
-                  pubDatetime: new Date(data.createdAt),
-                  modDatetime: new Date(data.updatedAt),
-                  description: data.SEO?.metaDescription || "",
-                  SEO: { ...data.SEO },
-                }as any}
-                secHeading={false}
-              />
-            )
-        )}
-      </ul>
-      <div class="all-posts-btn-wrapper">
-        <LinkButton href="/blog/">
-          /Blog
-          <svg xmlns="http://www.w3.org/2000/svg">
-            <path
-              class="dark:fill-[#E4007C]"
-              d="m11.293 17.293 1.414 1.414L19.414 12l-6.707-6.707-1.414 1.414L15.586 11H6v2h9.586z"
+        <div class="flex flex-col items-center md:flex-row md:justify-between">
+          <div class="mb-10 max-w-xl md:mb-0 md:pr-8">
+            <h1
+              class="mb-6 text-4xl font-extrabold tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white"
             >
-            </path>
-          </svg>
-        </LinkButton>
-      </div>
-    </section>
-  )
-}
+              {store?.title || "Markkët"}
+            </h1>
+            <p
+              class="mb-8 text-lg font-medium text-gray-700 dark:text-gray-300"
+            >
+              {
+                homePage?.SEO?.metaDescription ||
+                  store?.Description ||
+                  "A simple and minimal Markkët theme."
+              }
+            </p>
+          </div>
+        </div>
 
-      {
-        products && products.length > 0 && (
-          <section id="recent-posts">
-            <div class="mb-12 mt-6">
-              <h2>Catalogue</h2>
-              <ul class="-mx-4 flex flex-wrap">
-                {products.slice(0, 5).map(({ data }) => {
-                  return (
-                    <Card
-                      href={`/products/${data.slug || slugifyStr(data.Name)}`}
-                      tags={[]}
-                      image={data.Thumbnail || data.SEO?.socialImage}
-                      frontmatter={{
-                        author: "x",
-                        title: data.Name || data.SEO?.metaTitle || "---",
-                        pubDatetime: new Date(data.createdAt),
-                        modDatetime: new Date(data.updatedAt),
-                        description:
-                          data.SEO?.metaDescription || data.Description || "",
-                        SEO: {
-                          ...data.SEO,
-                          metaTitle:
-                            data.SEO?.metaTitle ||
-                            data.Name ||
-                            "Product Page - Markkët",
-                          socialImage: {
-                            url:
-                              data.SEO?.socialImage?.url || data.Thumbnail?.url,
-                          },
-                        },
-                      }}
-                    />
-                  );
-                })}
-              </ul>
-              <div class="all-posts-btn-wrapper">
-                <LinkButton href="/products/">
-                  /Catalogue|
-                  <svg xmlns="http://www.w3.org/2000/svg">
-                    <path class="dark:fill-[#E4007C]" d="m11.293 17.293 1.414 1.414L19.414 12l-6.707-6.707-1.414 1.414L15.586 11H6v2h9.586z" />
-                  </svg>
-                </LinkButton>
+        <section class="container mx-auto max-w-4xl px-4 py-12 sm:px-6">
+          <div class="prose prose-lg dark:prose-invert max-w-none">
+            <BlocksRenderer
+              content={homePage?.Content || ([] as BlocksContent[])}
+            />
+          </div>
+        </section>
+
+        <!-- Albums Section -->
+        <!-- <section class="container mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+          <h2
+            class="mb-12 text-3xl font-bold tracking-tight text-gray-900 dark:text-white"
+          >
+            Collections
+          </h2>
+          <AlbumsGrid albums={homePage?.albums} store={store} />
+        </section> -->
+
+        <!-- Store Links Section -->
+        {
+          links && links.length > 0 && (
+            <section class="container mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+              <h2 class="mb-8 text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
+                Connect With Us
+              </h2>
+
+              <div class="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                {links.map(link => (
+                  <a
+                    href={link.URL}
+                    class="group hover:border-accent-500 dark:hover:border-accent-500 flex items-center overflow-hidden rounded-lg border border-gray-200 bg-white p-4 shadow-sm transition-all hover:shadow-md dark:border-gray-700 dark:bg-gray-800"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <div class="text-accent-600 bg-accent-100 dark:text-accent-400 mr-4 flex h-12 w-12 items-center justify-center rounded-full dark:bg-gray-700">
+                      <svg
+                        class="h-6 w-6"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
+                        />
+                      </svg>
+                    </div>
+                    <div>
+                      <h3 class="group-hover:text-accent-600 dark:group-hover:text-accent-400 text-lg font-medium text-gray-900 dark:text-white">
+                        {link.Label}
+                      </h3>
+                      <p class="text-sm text-gray-500 dark:text-gray-400">
+                        {link.URL}
+                      </p>
+                    </div>
+                  </a>
+                ))}
               </div>
-            </div>
-          </section>
-        )
-      }
-      <Hr />
-    </section>
-    <section class="mb-10 pt-10">
-      <div  set:html={content} />
+            </section>
+          )
+        }
+
+        <!-- Store Description Section -->
+        <section class="bg-gray-50 dark:bg-gray-800/50">
+          <div class="container mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
+            <div
+              class="prose prose-lg dark:prose-invert max-w-none"
+              set:html={content}
+            />
+          </div>
+        </section>
+      </div>
+      <Footer />
     </section>
   </main>
-  <Footer />
 </Layout>
-
-<style>
-  /* ===== Hero Section ===== */
-  #hero {
-    @apply pb-6 pt-8;
-  }
-  #hero h1 {
-    @apply my-4 inline-block text-3xl font-bold sm:my-8 sm:text-5xl mx-8;
-  }
-  #hero .rss-link {
-    @apply mb-6;
-  }
-  #hero .rss-icon {
-    @apply mb-2 h-6 w-6 scale-110 fill-skin-accent sm:mb-3 sm:scale-125;
-  }
-  #hero p {
-    @apply my-2 mx-8;
-  }
-  .social-wrapper {
-    @apply mt-4 flex flex-col sm:flex-row sm:items-center;
-  }
-  .social-links {
-    @apply mb-1 mr-2 whitespace-nowrap sm:mb-0;
-  }
-
-  /* ===== Featured & Recent Posts Sections ===== */
-  #featured,
-  #recent-posts {
-    @apply pb-6 pt-12;
-  }
-  #featured h2,
-  #recent-posts h2 {
-    @apply text-2xl font-semibold tracking-wide;
-  }
-  .all-posts-btn-wrapper {
-    @apply my-8 text-center;
-  }
-</style>

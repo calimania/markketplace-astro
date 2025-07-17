@@ -1,10 +1,8 @@
 ## Markketplace AstroPaper
 
-Convenient frontend template to create clients for [markket.place](https://markket.place)
+Convenient frontend template to create clients for [de.markket.place](https://de.markket.place)
 
 Markket.place is an ecosystem with artists and creators for eCommerce
-
-This repository provides an easy to launch web client for stores to deploy as a static site for incredible performance
 
 ## Configuration
 
@@ -24,6 +22,12 @@ export const markketplace = {
   style: import.meta.env.MARKKET_STYLE || 'markket',
 };
 ```
+
+## Markket headless CMS
+
+Using the [cafecito](https://www.npmjs.com/package/cafecito) astro strapi loader
+
+`/src/content/config` for reference
 
 # Themes
 
@@ -184,7 +188,7 @@ Documentation can be read in two formats\_ _markdown_ & _blog post_.
 **Main Framework** - [Astro](https://astro.build/)
 **Type Checking** - [TypeScript](https://www.typescriptlang.org/)
 **Component Framework** - [ReactJS](https://reactjs.org/)
-**Styling** - [TailwindCSS](https://tailwindcss.com/)
+**Styling** - [TailwindCSS v4](https://tailwindcss.com/)
 **UI/UX** - [Figma Design File](https://www.figma.com/community/file/1356898632249991861)
 **Fuzzy Search** - [FuseJS](https://fusejs.io/)
 **Icons** - [Boxicons](https://boxicons.com/) | [Tablers](https://tabler-icons.io/)
@@ -263,4 +267,4 @@ Licensed under the [TSL License](./LICENSE), Copyleft © 2023
 
 Made with 🤍 by [Sat Naing](https://satnaing.dev) 👨🏻‍💻 and [contributors](https://github.com/satnaing/astro-paper/graphs/contributors).
 
-And taken over by [Calimania](https://github.com/calimania/)
+And satirized by [Calimania](https://github.com/calimania/)

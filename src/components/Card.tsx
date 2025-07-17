@@ -26,7 +26,7 @@ export default function Card({ href, frontmatter, tags, image, key, secHeading =
 
   return (
     <li className="mb-8 w-full md:w-1/2 lg:w-1/3 px-4" key={key}>
-      <article className="bg-gradient-to-br from-white to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300">
+      <article className="bg-linear-to-br from-white to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300">
         <a href={href} className="block group">
           {image?.url && (
             <div className="relative aspect-video overflow-hidden">
@@ -38,7 +38,7 @@ export default function Card({ href, frontmatter, tags, image, key, secHeading =
                 height={image?.height}
                 loading="lazy"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="absolute inset-0 bg-linear-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             </div>
           )}
           <div className="p-6">
