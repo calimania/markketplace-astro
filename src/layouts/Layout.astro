@@ -11,7 +11,7 @@ const googleSiteVerification = import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION;
 const stores = await getCollection("store");
 const store = stores?.[0]?.data;
 
-let baseUrl = Astro.site?.toString() || "https://markket.place";
+let baseUrl = SITE.website || "https://markket.place";
 
 if (!baseUrl?.startsWith("http")) {
   baseUrl = `https://de.markket.place/store/${store?.slug}`;
@@ -31,14 +31,13 @@ const {
 
 const {
   image,
-  /** item.createdAt  */
   pubDatetime = store?.createdAt || "",
   modDatetime = store?.updatedAt,
 } = meta;
 
 const socialImageURL = new URL(
   image ?? ogImage ?? SITE.ogImage ?? "og.png",
-  Astro.url.origin
+  baseUrl
 ).href;
 
 const structuredData = {
@@ -59,7 +58,7 @@ const structuredData = {
   ],
 };
 
-let href = new URL(Astro.url.pathname, Astro.site || "http://markket.place");
+let href = new URL(Astro.url.pathname, baseUrl);
 ---
 
 <!doctype html>
@@ -124,7 +123,7 @@ let href = new URL(Astro.url.pathname, Astro.site || "http://markket.place");
     />
     <meta
       property="og:url"
-      content={href ||
+      content={href?.toString() ||
         meta?.url ||
         post?.data?.SEO?.metaUrl ||
         store?.SEO?.metaUrl ||
@@ -136,6 +135,39 @@ let href = new URL(Astro.url.pathname, Astro.site || "http://markket.place");
         post?.data?.SEO?.socialImage?.url ||
         store?.SEO?.socialImage?.url ||
         socialImageURL}
+    />
+    <!-- Twitter Card Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content={meta?.title ||
+        post?.data?.SEO?.metaTitle ||
+        store?.SEO?.metaTitle ||
+        store?.title ||
+        title}
+    />
+    <meta
+      name="twitter:description"
+      content={meta?.description ||
+        post?.data?.SEO?.metaDescription ||
+        store?.SEO?.metaDescription ||
+        store?.Description ||
+        description}
+    />
+    <meta
+      name="twitter:image"
+      content={meta?.image ||
+        post?.data?.SEO?.socialImage?.url ||
+        store?.SEO?.socialImage?.url ||
+        socialImageURL}
+    />
+    <meta
+      name="twitter:url"
+      content={href?.toString() ||
+        meta?.url ||
+        post?.data?.SEO?.metaUrl ||
+        store?.SEO?.metaUrl ||
+        canonicalURL}
     />
 
     <!-- Article Published/Modified time : defaults to build/deploy time -->
