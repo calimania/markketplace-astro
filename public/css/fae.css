@@ -20,11 +20,11 @@
   --fae-glow: 0 0 10px rgba(170, 145, 211, 0.6);
 }
 
-.theme-fae {
+body.theme-fae {
   font-family: 'Comic Neue', cursive !important;
   color: var(--fae-text);
-  font-size: 1.13rem;
-    line-height: 1.7;
+  line-height: 1.7;
+  font-size: 1.33rem;
   }
 
 .theme-fae h1,
