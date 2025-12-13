@@ -1,8 +1,10 @@
 ---
 import { markketplace } from "@config";
 
-const { store } = Astro.props;
+const { store, products = [] } = Astro.props;
+
 // productPage, blogPage
+
 const split_title = store?.title.replace(/( )/gm, " ").split(" ");
 ---
 
@@ -48,18 +50,19 @@ const split_title = store?.title.replace(/( )/gm, " ").split(" ");
           </p>
         </div>
         <div class="flex gap-6">
-          <a
-            href="/products"
-            class="group transform bg-gray-900 px-8 py-4 text-sm font-light tracking-wider text-white uppercase shadow-lg transition-all duration-300 hover:-translate-y-1 hover:bg-gray-800"
-          >
-            <span class="flex items-center">
-              Explore Collection
-              <div
-                class="ml-4 h-px w-6 bg-white transition-all duration-300 group-hover:w-8"
+          {
+            products?.length > 0 && (
+              <a
+                href="/products"
+                class="group transform bg-gray-900 px-8 py-4 text-sm font-light tracking-wider text-white uppercase shadow-lg transition-all duration-300 hover:-translate-y-1 hover:bg-gray-800"
               >
-              </div>
-            </span>
-          </a>
+                <span class="flex items-center">
+                  Explore Collection
+                  <div class="ml-4 h-px w-6 bg-white transition-all duration-300 group-hover:w-8" />
+                </span>
+              </a>
+            )
+          }
           <a
             href="/blog"
             class="group border border-gray-900 px-8 py-4 text-sm font-light tracking-wider text-gray-900 uppercase transition-all duration-300 hover:bg-gray-900 hover:text-white"
@@ -90,7 +93,6 @@ const split_title = store?.title.replace(/( )/gm, " ").split(" ");
             <div
               class="text-xs font-light tracking-widest text-gray-500 uppercase"
             >
-              Artisan Pieces
             </div>
           </div>
         </div>
@@ -102,7 +104,6 @@ const split_title = store?.title.replace(/( )/gm, " ").split(" ");
             <div
               class="text-xs font-light tracking-widest text-gray-500 uppercase"
             >
-              Featured Artists
             </div>
           </div>
         </div>

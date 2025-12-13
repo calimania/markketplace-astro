@@ -3,73 +3,67 @@ import { getCollection } from "astro:content";
 import Layout from "@layouts/Layout.astro";
 import { slugifyStr } from "@utils/slugify";
 import Footer from "@components/Footer.astro";
+import { IconRobot, IconHeart, IconStar } from "@tabler/icons-react";
 import {
-  IconRobot,
-  IconHeart,
-  IconStar,
-} from "@tabler/icons-react";
+  BlocksRenderer,
+  type BlocksContent,
+} from "@strapi/blocks-react-renderer";
 
-const store = (await getCollection('store'))?.[0]?.data;
-const products = (await getCollection('products'));
+const store = (await getCollection("store"))?.[0]?.data;
 
-let pages = (await getCollection("pages"))
+let pages = await getCollection("pages");
 
-const aboutPage = pages.find(p => p.data.slug =='about')?.data;
+const aboutPage = pages.find(p => p.data.slug == "about")?.data;
 
-const productsPage = pages.find(p => p.data.slug === 'products')?.data;
-
-pages = pages.sort((a, b) => a.data.Title.localeCompare(b.data.Title))
+pages = pages
+  .sort((a, b) => a.data.Title.localeCompare(b.data.Title))
   .filter(
-    page =>  !["products", "home", "receipt", "about"].includes(page.data.slug) //page.data.Active &&
+    page => !["products", "home", "receipt", "about"].includes(page.data.slug) //page.data.Active &&
   );
 
-
-const Icons = [
-  IconRobot,
-  IconHeart,
-  IconStar,
-]
+const Icons = [IconRobot, IconHeart, IconStar];
 ---
 
-<Layout  meta={{
+<Layout
+  meta={{
     title: `${aboutPage?.Title}`,
-    image:
-      aboutPage?.SEO?.metaImage?.url,
+    image: aboutPage?.SEO?.metaImage?.url,
     description: aboutPage?.SEO?.metaDescription,
-  }}>
-
-
+  }}
+>
   <section
-    class="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 py-24"
+    class="theme-fae min-h-screen bg-gradient-to-br from-[var(--fae-mint)] via-white to-[var(--fae-lavender)] py-24"
   >
     <div class="max-w-8xl mx-auto px-8">
-      <!-- Hero Section -->
       <header class="mb-20 text-center">
         <div class="mb-8">
           <div class="mx-auto mb-8 h-16 w-px bg-gray-900"></div>
         </div>
 
         <h1
-          class="mb-8 text-7xl font-extralight tracking-tight text-gray-900 md:text-8xl"
+          class="text-fae-purple fae-title mb-8 text-7xl font-extralight tracking-tight md:text-8xl"
         >
-          { aboutPage?.Title || 'About Us'}
+          {aboutPage?.Title || "About Us"}
         </h1>
         <p
-          class="mx-auto max-w-3xl text-xl leading-relaxed font-light text-gray-600"
+          class="text-fae-text mx-auto max-w-3xl text-xl leading-relaxed font-light"
         >
-        { aboutPage?.SEO?.metaDescription || 'dedicated to connecting extraordinary art with discerning collectors'}
+          {
+            aboutPage?.SEO?.metaDescription ||
+              "dedicated to connecting extraordinary art with discerning collectors"
+          }
         </p>
         <div class="mt-12">
           <div class="mx-auto h-px w-24 bg-gray-900"></div>
         </div>
       </header>
 
-      <!-- Featured Image -->
       <div class="mb-24">
         <div class="relative mx-auto max-w-6xl overflow-hidden shadow-2xl">
           <img
             src={aboutPage?.SEO?.socialImage?.url}
-            alt={aboutPage?.SEO?.socialImage?.alternativeText || aboutPage?.SEO?.metaDescription}
+            alt={aboutPage?.SEO?.socialImage?.alternativeText ||
+              aboutPage?.SEO?.metaDescription}
             class="h-[500px] w-full object-cover grayscale filter transition-all duration-1000 hover:grayscale-0"
           />
           <div
@@ -80,7 +74,9 @@ const Icons = [
             class="absolute bottom-8 left-8 bg-white/95 p-6 shadow-xl backdrop-blur-sm"
           >
             <div class="text-center">
-              <div class="mb-1 text-2xl font-light text-gray-900">{store?.createdAt?.slice(0,4)}</div>
+              <div class="mb-1 text-2xl font-light text-gray-900">
+                {store?.createdAt?.slice(0, 4)}
+              </div>
               <div
                 class="text-xs font-light tracking-widest text-gray-500 uppercase"
               >
@@ -90,95 +86,52 @@ const Icons = [
           </div>
 
           <div
-            class="absolute right-8 top-8 bg-white/95 p-6 shadow-xl backdrop-blur-sm"
+            class="absolute top-8 right-8 bg-white/95 p-6 shadow-xl backdrop-blur-sm"
           >
             <div class="text-center">
-              <div class="mb-1 text-2xl font-light text-gray-900">{products?.length}+</div>
+              <div class="mb-1 text-2xl font-light text-gray-900">+</div>
               <div
                 class="text-xs font-light tracking-widest text-gray-500 uppercase"
               >
-               Available Products
               </div>
             </div>
           </div>
         </div>
       </div>
-
-    <!-- 3 first pages -->
-
       <div class="mb-24 grid grid-cols-1 gap-8 md:grid-cols-3">
-        {pages.slice(0,3).map((page, index) => {
-        const Icon = Icons[index];
-        return (
-          <div
-            class="border border-gray-100/50 bg-white/80 p-8 text-center shadow-xl backdrop-blur-sm"
-          >
-            <Icon size={32} className="mx-auto mb-4 text-gray-900" />
-            <h3 class="mb-2 text-2xl font-light text-gray-900">
-               <a href={`/${slugifyStr(page.data.slug) || "#"}/`}>
-                {page?.data?.Title || 'Passion'}
-                </a>
-            </h3>
-            <p class="font-light text-gray-600">
-              {page?.data?.SEO?.metaDescription || 'deny nothing'}
-            </p>
-            <div class="flex items-center justify-between border-t border-gray-100 pt-4">
-             <a href={`/${slugifyStr(page.data.slug) || "#"}/`}>
-               <span class="text-xs font-light tracking-widest text-gray-500 uppercase">
-                Read More
-              </span>
-             </a>
-              <div class="flex h-4 w-4 items-center justify-center text-gray-900 transition-transform group-hover:translate-x-1">
-                →
-              </div>
-            </div>
-          </div>
-        )
-        })}
-      </div>
-
-      <!-- More Pages Grid -->
-       {(pages?.length > 3) && (
-      <div class="mb-20">
-        <div class="mb-16 text-center">
-          <span
-            class="text-xs font-light tracking-widest text-gray-500 uppercase"
-          >
-            Learn More
-          </span>
-        </div>
-        <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {
-            pages.slice(3).map(({ data: page})=> (
-              <article
-                class="group overflow-hidden border border-gray-100/50 bg-white/80 shadow-xl backdrop-blur-sm transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl"
-              >
-                <a href={`/${slugifyStr(page.slug) || "#"}/`} class="block h-full p-8">
-                  <div class="space-y-4">
-                    <h3 class="text-2xl leading-tight font-light text-gray-900 transition-colors group-hover:text-gray-700">
-                      {page.Title}
-                    </h3>
-                    {page.SEO?.metaDescription && (
-                      <p class="leading-relaxed font-light text-gray-600">
-                        {page.SEO.metaDescription}
-                      </p>
-                    )}
-                    <div class="flex items-center justify-between border-t border-gray-100 pt-4">
-                      <span class="text-xs font-light tracking-widest text-gray-500 uppercase">
-                        Read More
-                      </span>
-                      <div class="flex h-4 w-4 items-center justify-center text-gray-900 transition-transform group-hover:translate-x-1">
-                        →
-                      </div>
-                    </div>
+        {
+          pages.slice(0, 3).map((page, index) => {
+            const Icon = Icons[index];
+            return (
+              <div class="border border-gray-100/50 bg-white/80 p-8 text-center shadow-xl backdrop-blur-sm">
+                <Icon size={32} className="mx-auto mb-4 text-gray-900" />
+                <h3 class="text-fae-purple mb-2 text-2xl font-light">
+                  <a
+                    href={`/${slugifyStr(page.data.slug) || "#"}/`}
+                    class="fae-link-card hover:text-fae-pink underline transition-colors"
+                  >
+                    {page?.data?.Title || "Passion"}
+                  </a>
+                </h3>
+                <p class="text-fae-text-light font-light">
+                  {page?.data?.SEO?.metaDescription || "deny nothing"}
+                </p>
+                <div class="flex items-center justify-between border-t border-gray-100 pt-4">
+                  <a
+                    href={`/${slugifyStr(page.data.slug) || "#"}/`}
+                    class="fae-link-card text-fae-purple hover:text-fae-pink text-xs font-light tracking-widest uppercase underline transition-colors"
+                  >
+                    Read More
+                  </a>
+                  <div class="flex h-4 w-4 items-center justify-center text-gray-900 transition-transform group-hover:translate-x-1">
+                    →
                   </div>
-                </a>
-              </article>
-            ))
-          }
-        </div>
+                </div>
+              </div>
+            );
+          })
+        }
       </div>
-      )}
       {
         pages.length === 0 && (
           <div class="py-32 text-center">
@@ -194,32 +147,52 @@ const Icons = [
           </div>
         )
       }
-
-      <!-- Contact CTA -->
-      <div class="bg-gray-900 p-16 text-center text-white shadow-2xl">
-        <h3 class="mb-6 text-4xl font-extralight">
-          {productsPage?.Title || 'Start Your Collection'}
-        </h3>
-        <p class="mx-auto mb-8 max-w-2xl font-light text-gray-300">
-          {productsPage?.SEO?.metaDescription || 'find the perfect piece'}
-        </p>
-        <div class="flex flex-col justify-center gap-4 sm:flex-row">
-          <a
-            href="/products"
-            class="bg-white px-8 py-4 text-sm font-light tracking-wider text-gray-900 uppercase transition-colors hover:bg-gray-100"
-          >
-            Browse Collection
-          </a>
-          <a
-            href="/newsletter"
-            class="border border-white px-8 py-4 text-sm font-light tracking-wider text-white uppercase transition-colors hover:bg-white hover:text-gray-900"
-          >
-            Subscribe
-          </a>
-        </div>
-      </div>
     </div>
   </section>
-
+  <section class="container mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
+    <BlocksRenderer content={aboutPage?.Content || ([] as BlocksContent[])} />
+  </section>
+  <section>
+    {
+      pages?.length > 3 && (
+        <div class="mb-20">
+          <div class="mb-16 text-center">
+            <span class="text-xs font-light tracking-widest text-gray-500 uppercase">
+              Learn More
+            </span>
+          </div>
+          <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+            {pages.slice(3).map(({ data: page }) => (
+              <article class="group border-fae-lavender overflow-hidden border bg-white/80 shadow-xl backdrop-blur-sm transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl">
+                <a
+                  href={`/${slugifyStr(page.slug) || "#"}/`}
+                  class="fae-link-card hover:text-fae-pink block h-full p-8 underline transition-colors"
+                >
+                  <div class="space-y-4">
+                    <h3 class="text-fae-purple group-hover:text-fae-pink text-2xl leading-tight font-light transition-colors">
+                      {page.Title}
+                    </h3>
+                    {page.SEO?.metaDescription && (
+                      <p class="text-fae-text-light leading-relaxed font-light">
+                        {page.SEO.metaDescription}
+                      </p>
+                    )}
+                    <div class="border-fae-lavender flex items-center justify-between border-t pt-4">
+                      <span class="text-fae-purple text-xs font-light tracking-widest uppercase">
+                        Read More
+                      </span>
+                      <div class="text-fae-purple flex h-4 w-4 items-center justify-center transition-transform group-hover:translate-x-1">
+                        →
+                      </div>
+                    </div>
+                  </div>
+                </a>
+              </article>
+            ))}
+          </div>
+        </div>
+      )
+    }
+  </section>
   <Footer activeNav="pages" />
 </Layout>

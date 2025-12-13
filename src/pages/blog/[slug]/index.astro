@@ -58,14 +58,13 @@ const pagination = getPagination({
 ---
 
 <Layout meta={meta}>
-  {!post && <ArticlesPage pagination={pagination} page={blogPage} />}}
   {
     post && (
       <>
         <ArticlePage article={post} />
-        {/* // related articles */}
       </>
     )
   }
+  {!post && <ArticlesPage pagination={pagination} page={blogPage} />}
   <Footer />
 </Layout>

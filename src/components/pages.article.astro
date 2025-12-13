@@ -23,11 +23,8 @@ const getImageUrl = (article: Article["data"]) => {
 const imageUrl = getImageUrl(article);
 ---
 
-<article
-  class="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100"
->
+<main class="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
   <div class="mx-auto max-w-5xl px-8 py-16">
-    <!-- Back Navigation -->
     <div class="mb-16">
       <a
         href="/blog"
@@ -41,7 +38,6 @@ const imageUrl = getImageUrl(article);
       </a>
     </div>
 
-    <!-- Article Header -->
     <header class="mb-20 text-center">
       <div class="mb-8">
         <time
@@ -95,24 +91,12 @@ const imageUrl = getImageUrl(article);
       >
       </div>
     </div>
-
-    <!-- Content Area -->
-    <div class="prose prose-lg mb-20 max-w-none">
-      <div
-        class="mb-16 border border-gray-100/50 bg-white/80 p-12 shadow-xl backdrop-blur-sm"
-      >
-        <div class="mb-8 text-center">
-          <div class="mx-auto mb-6 h-px w-16 bg-gray-900"></div>
-        </div>
-        <div class="space-y-6 leading-relaxed font-light text-gray-700">
-          <article id="article" class="blog-post mt-8 w-full">
-            <BlocksRenderer content={article.Content} />
-          </article>
-        </div>
-      </div>
+    <div class="mb-20 max-w-none rounded-xl">
+      <article id="article" class="blog-post mt-8 w-full">
+        <BlocksRenderer content={article.Content} />
+      </article>
     </div>
-    <!-- Article Footer -->
-    <footer class="border-t border-gray-200 pt-16">
+    <section class="pt-12">
       <div class="flex flex-wrap items-center justify-between gap-8">
         <a
           href="/blog"
@@ -124,16 +108,7 @@ const imageUrl = getImageUrl(article);
           </div>
           More Articles
         </a>
-
-        <!-- <div class="text-center">
-          <p class="mb-4 font-light text-gray-600">Appreciate this piece?</p>
-          <button
-            class="transform bg-gray-900 px-8 py-4 text-xs font-light tracking-wider text-white uppercase shadow-lg transition-all duration-300 hover:-translate-y-1 hover:bg-gray-800"
-          >
-            Subscribe to Gallery Updates
-          </button>
-        </div> -->
       </div>
-    </footer>
+    </section>
   </div>
-</article>
+</main>
