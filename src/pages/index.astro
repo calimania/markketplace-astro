@@ -49,7 +49,11 @@ const meta = {
     blogPage={blogPage}
     productsPage={productsPage}
   />
-  <ProductList products={products} page={productsPage} />
+  {
+    products?.length > 0 && (
+      <ProductList products={products} page={productsPage} />
+    )
+  }
   <ArticleList articles={posts} page={blogPage} />
   <main>
     <section
