@@ -33,17 +33,17 @@ export const markketplace = {
   }
 };
 
-/**q
+/**
  * Global configuration attributes for the astro site
  *
  * @TODO: Read these values from the API during launch or build time
  */
 export const SITE: Site = {
-  website: "https://markket.place/",
+  website: markketplace.url,
   author: "Markket",
-  profile: "https://markket.place/stores/markket",
-  desc: "A minimal, responsive and SEO-friendly Markketplace theme.",
-  title: "Morir Soñando",
+  profile: "https://markket.place/",
+  desc: "A minimal, responsive and SEO-friendly Markketplace theme",
+  title: "Markket Theme",
   ogImage: "https://markketplace.nyc3.digitaloceanspaces.com/uploads/3852868ed9aad1e45e4ee4992fe43177.png",
   lightAndDarkMode: true,
   postPerIndex: 4,
