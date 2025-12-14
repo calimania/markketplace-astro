@@ -3,18 +3,19 @@ import Subscribe from "@components/Subscribe";
 import { getCollection } from "astro:content";
 import Footer from "@components/Footer.astro";
 import Layout from "@layouts/Layout.astro";
-import Breadcrumbs from "@components/Breadcrumbs.astro";
 import {
   BlocksRenderer,
   type BlocksContent,
 } from "@strapi/blocks-react-renderer";
-import Hr from "@components/Hr.astro";
 import PageHeader from "@components/ui.page.header.astro";
+import type Page from "@interfaces/Page";
+import type Store from "@interfaces/Store";
 
 const page = (await getCollection("pages")).find(
   page => page.data.slug === "newsletter"
-)?.data;
-const store = (await getCollection("store"))?.[0]?.data;
+)?.data as Page;
+
+const store = (await getCollection("store"))?.[0]?.data as Store;
 
 const meta = {
   title: page?.SEO?.metaTitle || "Blog",
@@ -28,15 +29,14 @@ const meta = {
 
 <Layout meta={meta}>
   <PageHeader page={page} default_description="Sign up for updates" />
-  <Breadcrumbs />
   <section id="about" class="prose-img:border-0 mx-auto mb-10 max-w-3xl py-6">
     <BlocksRenderer content={page?.Content || ([] as BlocksContent[])} />
   </section>
   <Subscribe
     storeId={store?.documentId}
     storeName={store?.title || ""}
+    page={page}
     client:load
   />
-  <Hr />
   <Footer />
 </Layout>
